@@ -7,7 +7,7 @@
 <meta name="description" content="<#if site??>${site.seoDescription!''}</#if>">
 <meta name="copyright" content="<#if site??>${site.copyright!''}</#if>" />
 <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
-<meta property="qc:admins" content="16156710776074336375" />
+<meta property="qc:admins" content="22270672646074336375" />
 <title>循伍道</title>
 <!-- css -->
 <link rel="stylesheet" type="text/css" href="/client/css/common.css"/>

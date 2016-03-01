@@ -21,6 +21,15 @@
 	        $.cookie("autoLogin", null, { path: '/' }); 
 			location.href='/logout';
 		}
+		
+		<#if QQ??>
+			$(document).ready(function(){
+				if(confirm("欢迎使用QQ登陆循伍道，要现在绑定手机吗？"))
+				{
+					location.href="/user/change/mobile";
+				}
+			});
+		</#if>
 </script>		
 </head>
 <body>
@@ -31,7 +40,7 @@
       <div class="head-pic">
         <img src="<#if user??&&user.headImageUrl??&&user.headImageUrl?length gt 0>${user.headImageUrl}<#else>/client/images/default.jpg</#if>" alt="头像">
       </div>
-      <div class="phone-num"><#if user??>${user.mobile!''}</#if></div>
+      <div class="phone-num"><#if user??><#if user.nickname??&&user.nickname?length gt 0>${user.nickname}<#else>${user.mobile!''}</#if></#if></div>
       <a class="switch-accounts" href="javascript:logout();">切换账号</a>
     </section>
     <ul class="menu">

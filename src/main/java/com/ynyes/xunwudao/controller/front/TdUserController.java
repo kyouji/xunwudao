@@ -1,13 +1,9 @@
 package com.ynyes.xunwudao.controller.front;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,36 +12,23 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.hibernate.engine.spi.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tencent.common.Configure;
-import com.tencent.common.RandomStringGenerator;
-import com.tencent.common.Signature;
 import com.ynyes.xunwudao.entity.TdOrder;
 import com.ynyes.xunwudao.entity.TdApply;
 import com.ynyes.xunwudao.entity.TdApplyType;
 import com.ynyes.xunwudao.entity.TdArea;
-import com.ynyes.xunwudao.entity.TdBill;
 import com.ynyes.xunwudao.entity.TdDemand;
-import com.ynyes.xunwudao.entity.TdPhoto;
 import com.ynyes.xunwudao.entity.TdUser;
-import com.ynyes.xunwudao.entity.TdUserPoint;
 import com.ynyes.xunwudao.service.TdApplyService;
 import com.ynyes.xunwudao.service.TdApplyTypeService;
 import com.ynyes.xunwudao.service.TdAreaService;
@@ -53,10 +36,7 @@ import com.ynyes.xunwudao.service.TdCommonService;
 import com.ynyes.xunwudao.service.TdDemandService;
 import com.ynyes.xunwudao.service.TdEnterTypeService;
 import com.ynyes.xunwudao.service.TdOrderService;
-import com.ynyes.xunwudao.service.TdPhotoService;
-import com.ynyes.xunwudao.service.TdUserPointService;
 import com.ynyes.xunwudao.service.TdUserService;
-import com.ynyes.xunwudao.util.ClientConstant;
 
 import net.sf.json.JSONObject;
 
@@ -91,21 +71,18 @@ public class TdUserController {
 	private TdApplyService tdApplyService;
 	
 	@Autowired
-	private TdPhotoService tdPhotoService;
-	
-	@Autowired
-	private TdUserPointService tdUserPointService;
-	
-	@Autowired
 	private TdOrderService tdOrderService;
 
 	@RequestMapping(value = "/user/center")
-	public String user(HttpServletRequest req, ModelMap map) {
+	public String user(String code, Long QQ, HttpServletRequest req, ModelMap map) {
 		String username = (String) req.getSession().getAttribute("username");
 		if (null == username) {
 			return "redirect:/login";
 		}
 
+		if(null != QQ){
+			map.addAttribute("QQ", QQ);
+		}
 		tdCommonService.setHeader(map, req);
 
 		map.addAttribute("server_ip", req.getLocalName());
@@ -114,13 +91,156 @@ public class TdUserController {
 		TdUser tdUser = tdUserService.findByUsername(username);
 
 		if (null == tdUser) {
-			return "/client/error_404";
+			return "redirect:/login";
 		}
 
 		map.addAttribute("user", tdUser);
 		map.addAttribute("showIcon", 4);
+		
+        if (null != code) {
+        	TdIndexController index = new TdIndexController();
+			Map<String, String> res = index.getAccessToken(code);
+			System.out.println("openid:"+res.get("openid")); 
+			if (null == tdUserService.findByUsernameAndOpenid(username, res.get("openid"))) {
+				TdUser ever = tdUserService.findByOpenid(res.get("openid"));
+				if(null != ever){
+					ever.setOpenid(null);
+					tdUserService.save(ever);
+				}
+				
+				System.out.println("THIS USER DOESN'T HAVE ANY openid _ZHANGJI");
+				tdUser.setOpenid(res.get("openid"));
+				tdUserService.save(tdUser);
+			}
+		}
 
 		return "/client/user_center";
+	}
+	
+	@RequestMapping(value = "/weixin/login")
+	public String weixinLogin(HttpServletRequest req){
+		return "redirect:https://open.weixin.qq.com/connect/oauth2/authorize?appid="+Configure.getAppid()+"&redirect_uri=http%3A%2F%2Fwww.xwd33.com/weixin/user/center&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+	}
+	
+	//微信直接登陆
+	@RequestMapping(value = "/weixin/user/center")
+	public String weixinUserCenter(String code, HttpServletRequest req, ModelMap map) {
+		System.out.println("WEIXIN USER CENTER");
+		tdCommonService.setHeader(map, req);
+		
+        if (null != code) {
+        	TdWeixinController weixin = new TdWeixinController();
+			Map<String, String> res = weixin.getWebAccessToken(code);
+			String openid = res.get("openid");
+			String access_token = res.get("access_token");
+			System.out.println("---------0318-----------openid:"+openid);
+			System.out.println("---------0318-----------access_token:"+access_token);
+			if(null != openid){
+				TdUser tdUser = tdUserService.findByOpenid(openid);
+				if(null == tdUser){
+					
+					Map<String, Object> userInfo = weixin.getWeixinInfo(access_token, openid);
+					
+					System.out.println("****RES"+res);
+					System.out.println("****openid"+openid);
+					
+					TdUser newUser = new TdUser();
+					newUser.setUsername("weixin_"+openid.substring(0, 8));
+					newUser.setPassword("123456");
+					newUser.setAddress(userInfo.get("province").toString()+userInfo.get("city").toString());
+					newUser.setNickname(userInfo.get("nickname").toString());
+					newUser.setSex((boolean)userInfo.get("sex"));
+					newUser.setHeadImageUrl(userInfo.get("headimgurl").toString());
+					newUser.setTotalPoints(0L);
+					newUser.setLastLoginTime(new Date());
+					newUser.setOpenid(openid);
+					newUser.setUnionid(userInfo.get("unionid").toString());
+					tdUserService.save(newUser);
+					
+					Long id = newUser.getId();
+			        String number = String.format("%04d", id);
+					newUser.setNumber(number);
+					tdUserService.save(newUser);
+					
+					map.addAttribute("user", newUser);
+					req.getSession().setMaxInactiveInterval(60 * 60 * 2);
+					req.getSession().setAttribute("username", newUser.getUsername());
+				}
+				else{
+					tdUser.setLastLoginTime(new Date());
+					tdUserService.save(tdUser);
+					map.addAttribute("user", tdUser);
+					req.getSession().setMaxInactiveInterval(60 * 60 * 2);
+					req.getSession().setAttribute("username", tdUser.getUsername());
+				}
+				
+			}
+			
+		}
+
+		
+		map.addAttribute("showIcon", 4);
+		return "/client/user_center";
+	}
+	
+	public Map<String,String> getUserInfo(Map<String,String> access_token, String openid){
+		
+		Map<String, String> res = new HashMap<String, String>();
+		
+		System.out.println("微信登陆begin，获取用户信息。\n access_token:"+access_token+"\n openid"+openid);
+		
+		String url = "https://api.weixin.qq.com/sns/userinfo?access_token="+access_token+"&openid="+openid+"&lang=zh_CN";
+		String nickname = null;
+		String city = null;
+		String headimgurl = null;
+		String unionid = null;
+		try {  
+			  
+            URL urlGet = new URL(url);  
+
+            HttpURLConnection http = (HttpURLConnection) urlGet.openConnection();  
+
+            http.setRequestMethod("GET"); // 必须是get方式请求  
+
+            http.setRequestProperty("Content-Type",  
+
+                    "application/x-www-form-urlencoded");  
+
+            http.setDoOutput(true);  
+
+            http.setDoInput(true);  
+
+            http.connect();  
+
+            InputStream is = http.getInputStream();  
+
+            int size = is.available();  
+
+            byte[] jsonBytes = new byte[size];  
+
+            is.read(jsonBytes);  
+
+            String message = new String(jsonBytes, "UTF-8");  
+
+            JSONObject demoJson = JSONObject.fromObject(message);  
+
+            nickname = demoJson.getString("nickname");  
+            city = demoJson.getString("city");  
+            headimgurl = demoJson.getString("headimgurl");
+            unionid = demoJson.getString("unionid");
+            
+            res.put("nickname", nickname);
+            res.put("city", city);
+            res.put("headimgurl", headimgurl);
+            res.put("unionid", unionid);
+
+            is.close();  
+
+        } catch (Exception e) {  
+
+            e.printStackTrace(); 
+        }  
+		return res;
 	}
 
 	@RequestMapping(value = "/demand/add", method = RequestMethod.POST)
@@ -196,10 +316,12 @@ public class TdUserController {
 	@ResponseBody
 	public Map<String , Object> userInfo(HttpServletRequest req,
 													String realName,
+													String username,
+													String nickname,
 													Boolean sex,
 //													String headImageUrl,
 													String address, 
-													String mobile, 
+													String password,
 													HttpServletRequest request) {
 		Map<String, Object> res = new HashMap<String, Object>();
 	    res.put("code", 1);
@@ -214,45 +336,49 @@ public class TdUserController {
 
 		TdUser user = tdUserService.findByUsernameAndIsEnabled(usernameSession);
 		
-//		if (null == realName ||realName.equals(""))
-//		{
-//			res.put("msg", "联系人姓名不能为空！");
-//			return res;
-//		}
-//		if (null == username ||username.equals(""))
-//		{
-//			res.put("msg", "用户名不能为空！");
-//			return res;
-//		}
-		if (null == mobile || mobile.equals(""))
+		if (null == password ||password.equals(""))
 		{
-			res.put("msg", "联系电话不能为空！");
+			res.put("msg", "请设置密码！");
 			return res;
 		}
-		if(!isMobileNO(mobile))
+		if (null == username ||username.equals(""))
 		{
-			res.put("msg", "电话号码格式不对！");
+			res.put("msg", "用户名不能为空！");
 			return res;
 		}
+//		if (null == mobile || mobile.equals(""))
+//		{
+//			res.put("msg", "联系电话不能为空！");
+//			return res;
+//		}
+//		if(!isMobileNO(mobile))
+//		{
+//			res.put("msg", "电话号码格式不对！");
+//			return res;
+//		}
 //
-//		TdUser user1 = tdUserService.findByUsername(username);
-//		if (null != user1 && user1.getId() != user.getId()) {
-//			res.put("msg", "该用户名已被注册！");
-//			return res;
-//		}
-		TdUser user2 = tdUserService.findByMobile(mobile);
-		if (null != user2 && user2.getId() != user.getId()) {
-			res.put("msg", "该联系电话已被注册！");
+		TdUser user1 = tdUserService.findByUsername(username);
+		if (null != user1 && user1.getId() != user.getId()) {
+			res.put("msg", "该用户名已被注册！");
 			return res;
 		}
+//		TdUser user2 = tdUserService.findByMobile(mobile);
+//		if (null != user2 && user2.getId() != user.getId()) {
+//			res.put("msg", "该联系电话已被注册！");
+//			return res;
+//		}
 		
 //		user.setHeadImageUrl(headImageUrl);
 		user.setSex(sex);
 		user.setAddress(address);
 		user.setRealName(realName);
-		user.setMobile(mobile);
+		user.setPassword(password);
+		user.setUsername(username);
+		user.setNickname(nickname);
+//		user.setMobile(mobile);
 		user = tdUserService.save(user);
-  
+		
+		req.getSession().setAttribute("username", username);
 	    res.put("code", 0);
 	    return res;
 	}

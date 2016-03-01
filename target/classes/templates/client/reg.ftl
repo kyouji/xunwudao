@@ -7,7 +7,7 @@
 <meta name="description" content="<#if site??>${site.seoDescription!''}</#if>">
 <meta name="copyright" content="<#if site??>${site.copyright!''}</#if>" />
 <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
-<title>循伍道</title>
+<title>循伍道-注册</title>
 <!-- css -->
 <link rel="stylesheet" type="text/css" href="/client/css/common.css"/>
 <link rel="stylesheet" type="text/css" href="/client/css/main.css"/>

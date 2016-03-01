@@ -4,32 +4,19 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
-import org.neo4j.cypher.internal.compiler.v2_1.functions.Substring;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ynyes.xunwudao.entity.TdBill;
-import com.ynyes.xunwudao.entity.TdData;
-import com.ynyes.xunwudao.entity.TdNavigationMenu;
 import com.ynyes.xunwudao.entity.TdUser;
-import com.ynyes.xunwudao.service.TdArticleService;
-import com.ynyes.xunwudao.service.TdBillService;
-import com.ynyes.xunwudao.service.TdCommonService;
-import com.ynyes.xunwudao.service.TdDataService;
-import com.ynyes.xunwudao.service.TdDataTypeService;
-import com.ynyes.xunwudao.service.TdNavigationMenuService;
 import com.ynyes.xunwudao.service.TdUserService;
 import com.ynyes.xunwudao.util.SiteMagConstant;
 
@@ -37,22 +24,7 @@ import com.ynyes.xunwudao.util.SiteMagConstant;
 public class TdDataController {
 	
 	@Autowired
-    private TdCommonService tdCommonService;
-	
-	@Autowired
-	private TdDataService tdDataService;
-	
-	@Autowired
-	private TdDataTypeService tdDataTypeService;
-	
-	@Autowired
 	private TdUserService tdUserService;
-	
-	@Autowired
-	private TdNavigationMenuService tdNavigationMenuService;
-	
-	@Autowired
-	private TdBillService tdBillService;
 	
 	String filepath = SiteMagConstant.imagePath;
 

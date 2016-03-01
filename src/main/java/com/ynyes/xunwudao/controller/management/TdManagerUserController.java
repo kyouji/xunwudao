@@ -22,10 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ynyes.xunwudao.entity.TdApply;
 import com.ynyes.xunwudao.entity.TdApplyType;
-import com.ynyes.xunwudao.entity.TdBill;
 import com.ynyes.xunwudao.entity.TdEnterType;
-import com.ynyes.xunwudao.entity.TdFinance;
-import com.ynyes.xunwudao.entity.TdGather;
 import com.ynyes.xunwudao.entity.TdUser;
 import com.ynyes.xunwudao.service.TdApplyService;
 import com.ynyes.xunwudao.service.TdApplyTypeService;
@@ -297,10 +294,10 @@ public class TdManagerUserController {
         tdUser.setIsDeal(0L);
         tdUserService.save(tdUser);
         
-        if (tdUser.getRoleId()==1)
-        {
-        	
-        }
+//        if (tdUser.getRoleId()==1)
+//        {
+//        	
+//        }
         
         return "redirect:/Verwalter/user/list";
     }

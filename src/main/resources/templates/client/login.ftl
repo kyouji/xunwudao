@@ -13,6 +13,7 @@
 <link rel="stylesheet" type="text/css" href="/client/css/main.css"/>
 <script src="/client/js/jquery-1.11.3.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="/client/js/jquery.cookie.js"></script>
+<script src="http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></script>
 <script>
 $(document).ready(function(){
 			//记住密码
@@ -57,16 +58,44 @@ function loginSubmit()
 				alert(data.msg);
 			}
 			else{
-				<#if goodsId??>
-			     location.href='/goods/detail/${goodsId?c}';
-				<#else>
-			     location.href="/user/center";
-			    </#if>
+				var ua = navigator.userAgent.toLowerCase();
+				if(ua.match(/MicroMessenger/i)=="micromessenger") 
+				{
+					location.href='/getOpen<#if goodsId??>?goodsId=${goodsId?c}</#if>';
+				}else{
+					<#if goodsId??>
+				     location.href='/goods/detail/${goodsId?c}';
+					<#else>
+				     location.href="/user/center";
+				    </#if>
+				}
 			}
 	      }
 	  });
 }
 
+function weixin(){
+	//判断是否微信打开
+	var ua = navigator.userAgent.toLowerCase();
+	
+	if(ua.match(/MicroMessenger/i)=="micromessenger") 
+	{
+		location.href="/weixin/login";
+	}
+	else{
+		var obj = new WxLogin({
+                              id:"login_container", 
+                              appid: "${appId!''}", 
+                              scope: "snsapi_login", 
+                              redirect_uri: "http://www.xwd33.com",
+                              state: "state",
+                              style: "",
+                              href: ""
+                            });
+                            
+        location.href='https://open.weixin.qq.com/connect/qrconnect?appid=${appId!''}&redirect_uri=http%3A%2F%2Fwww.xwd33.com&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect'                    
+	}
+}
 </script>
 </head>
 <body>
@@ -89,28 +118,29 @@ function loginSubmit()
         <a style="float:right;margin:5px 5px 0 0;" href="/login/password_retrieve">忘记密码</a>
       </section>
     <!-- 其他方式登录 -->
-    <!-- 
-    <section class="other-ways">
+    <section class="other-ways" style="margin-top:2%;">
       <div class="title">其他方式登录</div>
       <ul>
         <li>
-          <a href="#">
+          <a href="javascript:weixin();">
             <img src="/client/images/icon_login_weixin.png" alt="微信登录">
+            <#--<a href="http://weixin.qq.com/r/OEzUzGjEzTWyrSyv9xkq"><img src="/client/images/icon_login_phone.png"></a>-->
           </a>
         </li>
         <li>
-          <a href="#">
+          <a href="/login/mobile?goodsId=<#if goodsId??>${goodsId?c}</#if>">
             <img src="/client/images/icon_login_phone.png" alt="手机登录">
           </a>
         </li>
         <li>
-          <a href="#">
+          <a href="/qq/login">
             <img src="/client/images/icon_login_qq.png" alt="QQ登录">
           </a>
         </li>
       </ul>
     </section>
-    -->
+	<div id="login_container">
+	</div>
   </article>
   <!-- 登录 END -->
 

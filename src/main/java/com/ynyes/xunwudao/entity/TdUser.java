@@ -128,6 +128,14 @@ public class TdUser {
     //微信标识
     @Column
     private String openid;
+    
+    //qq互联标识
+    @Column
+    private String qqOpenid;
+    
+    //微信公众平台统一标识
+    @Column
+    private String unionid;
    
 
 
@@ -541,6 +549,38 @@ public class TdUser {
 
 	public void setSpend(Double spend) {
 		this.spend = spend;
+	}
+
+
+
+
+
+	public String getUnionid() {
+		return unionid;
+	}
+
+
+
+
+
+	public void setUnionid(String unionid) {
+		this.unionid = unionid;
+	}
+
+
+
+
+
+	public String getQqOpenid() {
+		return qqOpenid;
+	}
+
+
+
+
+
+	public void setQqOpenid(String qqOpenid) {
+		this.qqOpenid = qqOpenid;
 	}
 
 

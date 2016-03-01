@@ -16,4 +16,5 @@
     <div class="hide-nav">
       <a class="ab-us" href="/info/aboutUs">关于我们</a>
       <a class="opinion" href="/info/suggestion">意见反馈</a>
+      <#if site??&&site.telephone??&&site.telephone?length gt 0><a class="opinion" href="tel:${site.telephone!''}">联系我们</a></#if>
     </div>

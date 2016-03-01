@@ -2,12 +2,20 @@ package com.ynyes.xunwudao.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.tencent.common.Configure;
+
+import net.sf.json.JSONObject;
 
 /**
  * Created by hyoga
@@ -93,4 +101,51 @@ public class HttpRequest {
         }
         return result;
     }
+    
+	//微信发送POST请求
+   public static  Map<String,String> connectWeiXinInterface(String interfaceUrl,String json){
+	        URL url;
+	        Map<String, String> map = new HashMap<String, String>();
+	        OutputStream os = null;
+	        InputStream is = null;
+	       try {
+	           url = new URL(interfaceUrl);
+	           HttpURLConnection http = (HttpURLConnection) url.openConnection();
+	           http.setRequestMethod("POST");
+	           http.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+	           http.setDoOutput(true);
+	           http.setDoInput(true);
+	           System.setProperty("sun.net.client.defaultConnectTimeout", "10000");// 连接超时30秒
+	           System.setProperty("sun.net.client.defaultReadTimeout", "10000"); // 读取超时30秒
+	           http.connect();
+	           os = http.getOutputStream();
+	           os.write(json.getBytes("UTF-8"));// 传入参数
+	           is = http.getInputStream();
+	           int size = is.available();
+	           byte[] jsonBytes = new byte[size];
+	           is.read(jsonBytes);
+	           String result = new String(jsonBytes, "UTF-8");
+	           
+	           JSONObject demoJson = JSONObject.fromObject(result);
+	           map.put("ticket", demoJson.getString("ticket"));
+	           map.put("expire_seconds", demoJson.getString("expire_seconds"));
+	           map.put("url", demoJson.getString("url"));
+	           
+//	           logger.info("sendTextMessageToUser result:"+result);
+	           System.out.println("请求返回结果:"+result);
+	           os.flush();
+	       } catch (Exception e) {
+	           e.printStackTrace();
+	       } finally{
+		      try {
+			      os.close();
+			      is.close();
+			 } catch (IOException e) {
+			 e.printStackTrace();
+			}
+	       }
+	       
+	       return map;
+    	}
+	   
 }

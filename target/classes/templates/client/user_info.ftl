@@ -11,11 +11,32 @@
 <!-- css -->
 <link rel="stylesheet" type="text/css" href="/client/css/common.css"/>
 <link rel="stylesheet" type="text/css" href="/client/css/main.css"/>
+<style>
+.change-mobile{position: absolute;
+  right: 2%;
+  top: 15%;
+  z-index: 2;
+  width: 48px;
+  height: 30px;
+  line-height: 30px;
+  color: #fff;
+  text-align: center;
+  background-color: #72d377;
+  border-radius: 3px;}
+</style>
 <!-- js -->
 <script type="text/javascript" src="/client/js/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="/client/js/index.js"></script>
 	<script type="text/javascript">
 		
+		$(document).ready(function(){
+			var mobileAru = $("#user_mobile_aru").html();
+			if(mobileAru == ""){
+				if(confirm("您尚未绑定手机号，现在绑定吗？")){
+					location.href="/user/change/mobile";
+				}
+			}
+		});
 		function formSubmit()
 		{
 			form = document.forms["upload"];
@@ -31,15 +52,19 @@
 			var realName = $("#realName").val();
 			//var headImageUrl = $("#file").val();
 			var address = $("#address").val();
-			var mobile = $("#mobile").val();
 			var sex =$("#sex").val(); 
+			var password = $("#password").val();
+			var username = $("#username").val();
+			var nickname = $("#nickname").val();
 		
 			  $.ajax({
 			      type:"post",
 			      url:"/user/info/submit",
 			      data:{"realName":realName,
 						    "sex":sex,
-						    "mobile":mobile,
+						    "password":password,
+						    "nickname":nickname,
+						    "username":username,
 						    "address":address},
 			      success:function(data){
 					if (data.code == 1)
@@ -82,6 +107,10 @@
     </section>
     <section class="right">
       <div class="inp">
+        <label>昵称：</label>
+        <input type="text" name="nickname" id="nickname" value="<#if user??>${user.nickname!''}</#if>">
+      </div>
+      <div class="inp">
         <label>姓名：</label>
         <input type="text" name="realName" id="realName" value="<#if user??>${user.realName!''}</#if>">
       </div>
@@ -94,11 +123,20 @@
       </div>
       <div class="inp">
         <label>电话：</label>
-        <input type="tel" id="mobile" name="mobile" value="<#if user??>${user.mobile!''}</#if>">
+        <span style="color:#999999;" id="user_mobile_aru"><#if user??>${user.mobile!''}</#if></span>
+        <a class="change-mobile" id="smsCodeBtn" href="/user/change/mobile">修改</a>
       </div>
       <div class="inp">
         <label>地址：</label>
         <input type="text" name="address" id="address" value="<#if user??>${user.address!''}</#if>">
+      </div>
+      <div class="inp">
+        <label>账号：</label>
+        <input type="text" name="username" id="username" value="<#if user??>${user.username!''}</#if>">
+      </div>
+      <div class="inp">
+        <label>密码：</label>
+        <input type="text" name="password" id="password" value="<#if user??>${user.password!''}</#if>">
       </div>
     </section>
   </article>

@@ -1,6 +1,5 @@
 package com.ynyes.xunwudao.controller.front;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -8,28 +7,24 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.neo4j.cypher.internal.compiler.v2_1.perty.printToString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ynyes.xunwudao.entity.TdArticle;
 import com.ynyes.xunwudao.entity.TdArticleCategory;
 import com.ynyes.xunwudao.entity.TdDemand;
 import com.ynyes.xunwudao.entity.TdNavigationMenu;
-import com.ynyes.xunwudao.entity.TdUser;
 import com.ynyes.xunwudao.service.TdArticleCategoryService;
 import com.ynyes.xunwudao.service.TdArticleService;
 import com.ynyes.xunwudao.service.TdCommonService;
 import com.ynyes.xunwudao.service.TdDemandService;
 import com.ynyes.xunwudao.service.TdNavigationMenuService;
 import com.ynyes.xunwudao.util.ClientConstant;
-import com.ynyes.xunwudao.util.SiteMagConstant;
 
 /**
  * 

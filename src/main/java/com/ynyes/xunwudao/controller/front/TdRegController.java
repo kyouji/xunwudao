@@ -49,13 +49,7 @@ public class TdRegController {
 	private TdUserService tdUserService;
 
 	@Autowired
-	private TdSettingService tdSettingService;
-
-	@Autowired
 	private TdCommonService tdCommonService;
-	
-	@Autowired
-	private TdEnterTypeService tdEnterTypeService;
 	
 	@Autowired
 	private TdGoodsService tdGoodsService;
@@ -86,6 +80,126 @@ public class TdRegController {
 		return "/logutil";
 	}
 
+	//修改手机号码
+	@RequestMapping(value="/user/change/mobile")
+	public String userCM(ModelMap map, HttpServletRequest request){
+		String username = (String) request.getSession().getAttribute("username");
+		if(null == username){
+			return "redirect:/login";
+		}
+		
+		return "/client/user_change_mobile";
+	}
+	
+	@RequestMapping(value = "/user/mobile/submit", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> userMS(
+									String mobile, 
+									String smsCode,
+									HttpServletRequest request) {
+	    Map<String, Object> res = new HashMap<String, Object>();
+	    res.put("code", 1);
+	    
+		String username = (String) request.getSession().getAttribute("username");
+		if(null == username){
+			res.put("msg", "请先登陆");
+			return res;
+		}
+	    
+		if (null == mobile || mobile.equals(""))
+		{
+			res.put("msg", "手机电话不能为空！");
+			res.put("id", "txt_regMobile");
+			return res;
+		}
+		if(!isMobileNO(mobile))
+		{
+			res.put("msg", "手机号码格式不对！");
+			res.put("id", "txt_regMobile");
+			return res;
+		}
+		TdUser user2 = tdUserService.findByMobile(mobile);
+		if (null != user2) {
+			res.put("msg", "该电话号码已注册，要合并账号吗？");
+			res.put("addall", mobile);
+			res.put("id", "txt_regMobile");
+			return res;
+		}
+		
+	    String SMSCODE = (String) request.getSession().getAttribute("SMSCODE");
+	    if(null != SMSCODE){
+			if(!SMSCODE.equalsIgnoreCase(smsCode)){
+				res.put("msg", "手机验证码错误！");
+				res.put("id", "txt_regMcode");
+				return res;
+			}
+	    }
+	
+		TdUser user = tdUserService.findByUsername(username);
+		user.setMobile(mobile);
+		tdUserService.save(user);
+		
+		request.getSession().setAttribute("username", user.getUsername());
+		res.put("msg", "修改成功！");
+	    res.put("code", 0);
+	    return res;
+	}
+	
+	@RequestMapping(value = "/user/addall", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> userAddall(
+									String mobile, 
+									HttpServletRequest request) {
+	    Map<String, Object> res = new HashMap<String, Object>();
+	    res.put("code", 1);
+	    
+		String username = (String) request.getSession().getAttribute("username");
+		if(null == username){
+			res.put("msg", "请先登陆");
+			res.put("login", 1);
+			return res;
+		}
+	    
+		if (null == mobile || mobile.equals(""))
+		{
+			res.put("msg", "手机电话不能为空！");
+			res.put("id", "txt_regMobile");
+			return res;
+		}
+		if(!isMobileNO(mobile))
+		{
+			res.put("msg", "手机号码格式不对！");
+			res.put("id", "txt_regMobile");
+			return res;
+		}
+		TdUser user2 = tdUserService.findByMobile(mobile);
+		if (null == user2) {
+			res.put("msg", "该手机尚未注册！");
+			res.put("id", "txt_regMobile");
+			return res;
+		}
+	
+		TdUser user = tdUserService.findByUsername(username);
+		//合并账号
+		user.setMobile(mobile);
+		user.setPassword(user2.getPassword());
+		if(null == user.getNickname() || user.getNickname().equals("")){
+			user.setNickname(user2.getNickname());
+		}
+		if(null == user.getRealName() || user.getRealName().equals("")){
+			user.setRealName(user2.getRealName());
+		}
+		if(null == user.getAddress() || user.getAddress().equals("")){
+			user.setAddress(user2.getAddress());
+		}
+		user.setTotalPoints(user.getTotalPoints() + user2.getTotalPoints());
+		tdUserService.save(user);
+		
+		request.getSession().setAttribute("username", user.getUsername());
+		res.put("msg", "修改成功！");
+	    res.put("code", 0);
+	    return res;
+	}
 	/**
 	 * 
 	 * 注册用户保存到数据库<BR>
@@ -256,7 +370,8 @@ public class TdRegController {
 		String smscode = random.nextInt(9000) + 1000 + "";
 		HttpSession session = request.getSession();
 		session.setAttribute("SMSCODE", smscode);
-		String info = "【循伍道助健康】健康交给循伍道，活到100不算老，欢迎你注册循伍道健康管理VIP会员，验证码:" + smscode + "，此验证码三分钟内有效。";
+		res.put("smscode", smscode); //测试用
+		String info = "【循伍道助健康】验证码:" + smscode + "，健康交给循伍道，活到100不算老，欢迎你注册循伍道健康管理VIP会员，此验证码三分钟内有效。";
 		System.err.println(smscode);
 		String content = null;
 		try {

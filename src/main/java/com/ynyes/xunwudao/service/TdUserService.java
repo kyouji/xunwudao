@@ -125,7 +125,14 @@ public class TdUserService {
 
 		return repository.findByNumber(number);
 	}
+	
+	public TdUser findByQqOpenid(String openid) {
+		if (null == openid) {
+			return null;
+		}
 
+		return repository.findByQqOpenid(openid);
+	}
 	public TdUser findByUsernameAndIsEnabled(String username) {
 		if (null == username) {
 			return null;
@@ -155,6 +162,20 @@ public class TdUserService {
 		}
 
 		return repository.findByUsernameAndOpenid(username, openid);
+	}
+	
+	//微信开放平台
+	public TdUser findByUsernameAndUnionid(String username, String unionid) {
+		if (null == unionid || null == username) {
+			return null;
+		}
+		return repository.findByUsernameAndUnionid(username, unionid);
+	}
+	public TdUser findByUnionid( String unionid) {
+		if (null == unionid) {
+			return null;
+		}
+		return repository.findByUnionid(unionid);
 	}
 
 	public TdUser findByUsernameAndIdNot(String username, Long id) {

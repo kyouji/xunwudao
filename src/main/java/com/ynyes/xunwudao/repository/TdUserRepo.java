@@ -39,7 +39,7 @@ public interface TdUserRepo extends
                                                                 Long roleId3,
                                                                 String keyword4,
                                                                 Long roleId4, 
-                                                                Pageable page);
+                                                                Pageable page); 
     
     TdUser findByUsernameAndStatusIdOrUsernameAndStatusId(String username, Long statusId, String username1, Long statusId1);
     
@@ -48,9 +48,10 @@ public interface TdUserRepo extends
     TdUser findByUsernameIgnoreCase(String username);
     
     TdUser findByOpenid(String openid);
-    
+     
     TdUser findByUsernameAndOpenid(String username, String openid);
-    
+    TdUser findByUsernameAndUnionid(String username, String unionid);
+    TdUser findByUnionid(String unionid);
     TdUser findByUsernameAndIdNot(String username, Long id);
     
     TdUser findByNumber(String number);
@@ -58,5 +59,5 @@ public interface TdUserRepo extends
     TdUser findByMobileAndStatusIdOrMobileAndStatusId(String mobile,Long statusId,String mobile1,Long statusId1);		//手机号已验证查找
     
     TdUser findByMobile(String mobile);		//手机号查找
-    
+    TdUser findByQqOpenid(String openid);
 }

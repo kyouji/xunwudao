@@ -11,12 +11,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.ynyes.xunwudao.entity.TdApplyType;
 import com.ynyes.xunwudao.entity.TdArea;
-import com.ynyes.xunwudao.entity.TdBillType;
 import com.ynyes.xunwudao.entity.TdEnterType;
 import com.ynyes.xunwudao.entity.TdSetting;
 import com.ynyes.xunwudao.service.TdApplyTypeService;
 import com.ynyes.xunwudao.service.TdAreaService;
-import com.ynyes.xunwudao.service.TdBillTypeService;
 import com.ynyes.xunwudao.service.TdEnterTypeService;
 import com.ynyes.xunwudao.service.TdManagerLogService;
 import com.ynyes.xunwudao.service.TdSettingService;
@@ -40,9 +38,6 @@ public class TdManagerSettingController {
     
     @Autowired
     TdEnterTypeService tdEnterTypeService;
-    
-    @Autowired
-    TdBillTypeService tdBillTypeService;
     
     @Autowired
     TdAreaService tdAreaService;
@@ -159,8 +154,6 @@ public class TdManagerSettingController {
         map.addAttribute("__VIEWSTATE", __VIEWSTATE);
         switch (type)
         {
-	    	case "billType": map.addAttribute("billType_list", tdBillTypeService.findAllOrderBySortIdAsc());
-	    	return "/site_mag/billType_list";
 	    	
 	    	case "enterType": map.addAttribute("enterType_list", tdEnterTypeService.findAllOrderBySortIdAsc());
 	    	return "/site_mag/enterType_list";
@@ -171,7 +164,7 @@ public class TdManagerSettingController {
 	    	case "applyType": map.addAttribute("applyType_list", tdApplyTypeService.findAllOrderBySortIdAsc());
 	    	return "/site_mag/applyType_list";
 	    	
-	    	default: map.addAttribute("billType_list", tdBillTypeService.findAllOrderBySortIdAsc());
+	    	default: map.addAttribute("area_list", tdAreaService.findAllOrderBySortIdAsc());
         }
         
     	return "/site_mag/billType_list";
@@ -196,13 +189,6 @@ public class TdManagerSettingController {
             
         switch (type)
         {
-
-	    	case "billType": 
-		        if (null != id)
-		        {
-		        	map.addAttribute("billType", tdBillTypeService.findOne(id));
-		        }
-		        return "/site_mag/billType_edit";
 		        
 	    	case "enterType": 
 		        if (null != id)
@@ -226,9 +212,9 @@ public class TdManagerSettingController {
 		        return "/site_mag/applyType_edit";
 	    	
 	    	default: 
-		        if (null != id)
+	    		 if (null != id)
 		        {
-		        	map.addAttribute("billType", tdBillTypeService.findOne(id));
+		        	map.addAttribute("area", tdAreaService.findOne(id));
 		        }
         }
 
@@ -255,27 +241,6 @@ public class TdManagerSettingController {
         tdManagerLogService.addLog("edit", "修改公司类型", req);
         
         return "redirect:/Verwalter/setting/enterType/list";
-    }
-    
-    //票据类型保存
-    @RequestMapping(value="/billType/save", method = RequestMethod.POST)
-    public String billTypeSave(TdBillType tdBillType,
-                        String __VIEWSTATE,
-                        ModelMap map,
-                        HttpServletRequest req) {
-        String username = (String) req.getSession().getAttribute("manager");
-        if (null == username)
-        {
-            return "redirect:/Verwalter/login";
-        }
-        
-        map.addAttribute("__VIEWSTATE", __VIEWSTATE);
-        
-        tdBillTypeService.save(tdBillType);
-        
-        tdManagerLogService.addLog("edit", "修改票据类型", req);
-        
-        return "redirect:/Verwalter/setting/billType/list";
     }
     
     //区域类型保存
@@ -337,11 +302,7 @@ public class TdManagerSettingController {
             if (chkId >=0 && ids.length > chkId)
             {
                 Long id = ids[chkId];
-                if (type.equals("billType"))
-                {
-                	 tdBillTypeService.delete(id);
-                }
-                else if (type.equals("enterType"))
+                if (type.equals("enterType"))
                 {
                	 tdEnterTypeService.delete(id);
                }
@@ -372,24 +333,8 @@ public class TdManagerSettingController {
         for (int i = 0; i < ids.length; i++)
         {
             Long id = ids[i];
-            if (type.equals("billType"))
-            {
-	            TdBillType e = tdBillTypeService.findOne(id);
-	            if (null != e)
-	            {
-	                if (sortIds.length > i)
-	                {
-	                    e.setSortId(sortIds[i]);
-	                    tdBillTypeService.save(e);
-	                }
-	                if(isEnables.length > i)
-	                {
-	                	e.setIsEnable(isEnables[i]);
-	                	tdBillTypeService.save(e);
-	                }
-	            }
-            }
-            else if (type.equals("enterType"))
+           
+            if (type.equals("enterType"))
             {
 	            TdEnterType e = tdEnterTypeService.findOne(id);
 	            if (null != e)

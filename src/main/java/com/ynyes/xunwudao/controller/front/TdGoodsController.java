@@ -2,10 +2,7 @@ package com.ynyes.xunwudao.controller.front;
 
 
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -13,13 +10,11 @@ import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mobile.device.Device;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.tencent.common.Configure;
 import com.ynyes.xunwudao.entity.TdGoods;
 import com.ynyes.xunwudao.entity.TdOrderGoods;
 import com.ynyes.xunwudao.entity.TdProductCategory;
@@ -28,12 +23,10 @@ import com.ynyes.xunwudao.entity.TdUserCollect;
 import com.ynyes.xunwudao.service.TdCommonService;
 import com.ynyes.xunwudao.service.TdGoodsService;
 import com.ynyes.xunwudao.service.TdOrderGoodsService;
-import com.ynyes.xunwudao.service.TdOrderService;
 import com.ynyes.xunwudao.service.TdProductCategoryService;
 import com.ynyes.xunwudao.service.TdUserCollectService;
 import com.ynyes.xunwudao.service.TdUserService;
 
-import net.sf.json.JSONObject;
 
 /**
  * 首页（我的）【需登陆】
@@ -60,9 +53,6 @@ public class TdGoodsController {
     
     @Autowired
     private TdUserCollectService tdUserCollectService;
-
-    @Autowired
-    private TdOrderService tdOrderService;
     
     @Autowired
     private TdOrderGoodsService tdOrderGoodsService;
@@ -105,7 +95,7 @@ public class TdGoodsController {
     
     //列表页
     @RequestMapping("/detail/{id}")
-    public String goodsDetail(@PathVariable Long id, HttpServletRequest req,  ModelMap map) {        
+    public String goodsDetail(@PathVariable Long id, String code, HttpServletRequest req,  ModelMap map) {        
     	tdCommonService.setHeader(map, req); 
     	String username = (String) req.getSession().getAttribute("username");
     	if(null != username)
@@ -120,6 +110,23 @@ public class TdGoodsController {
     		
     		String rfCode = userNumber + randomNumber.toString() + id.toString();
     		map.addAttribute("rfCode", rfCode);
+    		
+            if (null != code) {
+            	TdIndexController index = new TdIndexController();
+    			Map<String, String> res = index.getAccessToken(code);
+    			System.out.println("openid:"+res.get("openid")); 
+    			if (null == tdUserService.findByUsernameAndOpenid(username, res.get("openid"))) {
+    				TdUser ever = tdUserService.findByOpenid(res.get("openid"));
+    				if(null != ever){
+    					ever.setOpenid(null);
+    					tdUserService.save(ever);
+    				}
+    				
+    				System.out.println("THIS USER DOESN'T HAVE ANY openid _ZHANGJI");
+    				tdUser.setOpenid(res.get("openid"));
+    				tdUserService.save(tdUser);
+    			}
+    		}
     	}
     	if(null != id)
     	{
