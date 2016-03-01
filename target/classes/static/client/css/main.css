@@ -1,0 +1,1273 @@
+@charset "utf-8";
+/* CSS Document */
+
+/*引导页*/
+body.guide-bg {
+  background-image: url(../images/index_body_bg_1.jpg);
+  -webkit-background-size: cover;
+          background-size: cover;
+  background-attachment: fixed;
+}
+.guide-page .img1 {
+  margin: 5% auto;
+  width: 33.33%;
+  text-align: center;
+  -webkit-animation: img1 1s ease-in-out;
+          animation: img1 1s ease-in-out;
+}
+.guide-page .img2 {
+  margin: 0 auto;
+  width: 90%;
+  text-align: center;
+  -webkit-animation: img2 1s ease-in-out;
+          animation: img2 1s ease-in-out;
+}
+.guide-page .img3 {
+  position: fixed;
+  left: 25%;
+  bottom: 4%;
+  margin: 0 auto;
+  width: 50%;
+  text-align: center;
+  -webkit-animation: img3 1s ease-in-out;
+          animation: img3 1s ease-in-out;
+}
+@-webkit-keyframes img1 {
+  from {left: -100%;opacity: 0;}
+  to {left: 0;opacity: 1;}
+}
+@keyframes img1 {
+  from {left: -100%;opacity: 0;}
+  to {left: 0;opacity: 1;}
+}
+@-webkit-keyframes img2 {
+  from {right: -100%;opacity: 0;}
+  to {right: 0;opacity: 1;}
+}
+@keyframes img2 {
+  from {right: -100%;opacity: 0;}
+  to {right: 0;opacity: 1;}
+}
+@-webkit-keyframes img3 {
+  from {bottom: -10%;opacity: 0;}
+  to {bottom: 4%;opacity: 1;}
+}
+@keyframes img3 {
+  from {bottom: -10%;opacity: 0;}
+  to {bottom: 4%;opacity: 1;}
+}
+/*引导页 END*/
+
+/*index*/
+
+body.index-bg {
+  background-image: url(../images/index_bg_2.jpg);
+  -webkit-background-size: cover;
+          background-size: cover;
+  background-attachment: fixed;
+}
+
+.index .top-pic {
+  width: 100%;
+  text-align: center;
+}
+.index .top-pic img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.index .content {
+  padding: 2%;
+  width: 96%;
+}
+.index .content .title {
+  margin: 5% 0;
+  width: 100%;
+  font-family: "SimHei";
+  font-size: 1.8em;
+  text-align: center;
+}
+.index .content .writing {
+  width: 100%;
+  font-size: 1.1em;
+  text-align: center;
+}
+
+.index .content .img {
+  padding: 10% 0 5% 0;
+  width: 100%;
+  text-align: center;
+}
+/*index END*/
+
+/*个人中心*/
+.personal-center .common-top {
+  padding: 4% 2%;
+  width: 96%;
+  background: url(../images/bg_personal_center_1.png) no-repeat center;
+  -webkit-background-size: cover;
+          background-size: cover;
+}
+.personal-center .common-top .head-pic {
+  margin: 0 auto;
+  padding: 2px;
+  width: 60px;
+  height: 60px;
+  background-color: #fff;
+  border-radius: 50%;
+}
+.personal-center .common-top .head-pic img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+.personal-center .common-top .phone-num {
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  font-size: 1.2em;
+  color: #fff;
+  text-align: center;
+}
+.personal-center .common-top .switch-accounts {
+  margin: 0 auto;
+  width: 74px;
+  height: 25px;
+  line-height: 25px;
+  color: #fff;
+  text-align: center;
+  border: 1px solid #fff;
+  border-radius: 25px;
+}
+
+/*菜单*/
+.menu {
+  width: 100%;
+}
+.menu li a {
+  padding: 2%;
+  width: 96%;
+  height: 40px;
+  line-height: 40px;
+  font-size: 1.2em;
+  background: url(../images/icon_next.png) no-repeat 98% center;
+  -webkit-background-size: auto 20px;
+          background-size: auto 20px;
+}
+.menu li:nth-child(2n+1) {background-color: #f0efef;} 
+/*个人中心 END*/
+
+/*登录注册*/
+
+/*头部*/
+.login-head {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  border-bottom: 1px solid #ddd;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.login-head p {
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  font-size: 18px;
+  color: #72d377;
+  text-align: center;
+}
+.login-head a.back {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  width: 50px;
+  height: 50px;
+  background: url(../images/icon_login_head_back.png) no-repeat center;
+  -webkit-background-size: auto 20px;
+          background-size: auto 20px;
+}
+.login-head a.btn-registered {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 2;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  font-size: 1.2em;
+  color: #72d377;
+  text-align: center;
+}
+
+/*form*/
+.login-form .pic-1 {
+  width: 100%;
+  height: auto;
+}
+
+.login-form .enter-info {
+  padding: 2%;
+  width: 96%;
+}
+.login-form .enter-info .user-name,
+.login-form .enter-info .password {
+  position: relative;
+  display: block;
+  margin-bottom: 10px;
+  width: 100%;
+  height: 40px;
+  line-height:40px;
+  font-size: 1.2em;
+  border: none;
+  border-bottom: 1px solid #72d377;
+}
+.login-form .enter-info .btn-login {
+  width: 100%;
+  height: 40px;
+  line-height:40px;
+  font-size: 1.2em;
+  color: #fff;
+  background-color: #72d377;
+  border: none;
+  border-radius: 3px;
+}
+
+/*zhangji*/
+.login-form .enter-info .auto_login_bg{
+	width: 100%;
+	height: 40px;
+	line-height:40px;
+	background-color: #72d377;
+	background-image:url(/client/images/loading.gif);
+	background-repeat:no-repeat;
+	background-size: 24px;
+	background-position:65% center;
+	color: #fff;
+	font-size: 1.2em;
+	border: none;
+	border-radius: 3px;
+}
+
+/*其他方式登录*/
+.login-form .other-ways {
+  padding: 2%;
+  width: 96%;
+}
+.login-form .other-ways .title {
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  font-size: 1.2em;
+  color: #999;
+  text-align: center;
+}
+.login-form .other-ways ul {
+  width: 100%;
+  height: 60px;
+}
+.login-form .other-ways ul li {
+  float: left;
+  width: 33.33%;
+  height: 60px;
+}
+.login-form .other-ways ul li a {
+  margin: 0 auto;
+  width: 60px;
+  height: 60px;
+}
+.login-form .other-ways ul li a img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/*注册*/
+.login-form .enter-info .get-code {
+  position: absolute;
+  right: 2%;
+  top: 30%;
+  z-index: 2;
+  width: 100px;
+  height: 30px;
+  line-height: 30px;
+  color: #fff;
+  text-align: center;
+  background-color: #72d377;
+  border-radius: 3px;
+}
+.login-form .enter-info .service-agreement {
+  margin-bottom: 10px;
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  color: #999;
+}
+.login-form .enter-info .service-agreement input {
+  width: 16px;
+  height: 16px;
+  background: url(../images/icon_login_check.png) no-repeat center;
+  -webkit-background-size: auto 16px;
+          background-size: auto 16px;
+  vertical-align: middle;
+  outline: none;
+  -webkit-appearance:none;
+          appearance:none;
+}
+.login-form .enter-info .service-agreement input.checked {
+  background: url(../images/icon_login_checked.png) no-repeat center;
+  -webkit-background-size: auto 16px;
+          background-size: auto 16px;
+} 
+.login-form .enter-info .service-agreement a {
+  display: inline-block;
+  color: #72d377;
+  text-decoration: underline;
+}
+/*登录注册 END*/
+
+/*个人信息*/
+.login-head .c333 {color: #333;}
+.login-head a.c333 {color: #333;}
+
+.personal-message {
+  overflow: hidden;
+  padding: 2% 0;
+  width: 100%;
+}
+
+/*头像*/
+.personal-message .left {
+  float: left;
+  width: 33.33%;
+}
+.personal-message .left .img {
+  margin: 0 auto;
+  width: 80px;
+  height: 80px;
+  background-color: #ddd;
+  border-radius: 50%;
+}
+.personal-message .left .img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+.personal-message .left .edit {
+  margin: 0 auto;
+  width: 80px;
+  height: 30px;
+  line-height: 30px;
+  font-size: 1.2em;
+  text-align: center;
+}
+
+.personal-message .right {
+  float: left;
+  width: 66.67%;
+}
+.personal-message .right .inp {
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  border-bottom: 1px solid #ddd;
+}
+.personal-message .right .inp label {
+  float: left;
+  /*width: 22%;*/
+  width: 60px;
+  height: 40px;
+  font-size: 1.2em;
+}
+.personal-message .right .inp input {
+  float: left;
+  width: 70%;
+  height: 40px;
+  font-size: 1.2em;
+  border: none;
+}
+.personal-message .right .inp select {
+  float: left;
+  width: 70%;
+  height: 40px;
+  font-size: 1.2em;
+  border: none;
+  outline: none;
+  -webkit-appearance:none;
+          appearance:none;
+}
+/*个人信息 END*/
+
+/*会员积分*/
+.login-head .points-back {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  width: 50px;
+  height: 50px;
+  background: url(../images/icon_login_head_back_2.png) no-repeat center;
+  -webkit-background-size: auto 20px;
+          background-size: auto 20px;
+}
+
+.member-points {
+  padding: 2%;
+}
+.member-points .available-points {
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  font-size: 1.2em;
+  color: #72d377;
+}
+
+.member-points .get-points {
+  margin-top: 20px;
+  width: 100%;
+}
+.member-points .get-points p {
+  width: 100%;
+  line-height: 24px;
+  font-size: 1em;
+}
+.member-points .get-points p a {
+  display: inline-block;
+  color: #72d377;
+  text-decoration: underline;
+}
+/*会员积分 END*/
+
+/*我的收藏*/
+.my-collection {
+  padding: 2% 0;
+}
+
+.my-collection .collect-lists {
+  margin-bottom: 2%;
+  padding: 5px 0;
+  width: 100%;
+  height: 100px;
+  background-color: #f3f3f3;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.my-collection .collect-lists .checkbox {
+  float: left;
+  width: 10%;
+  height: 90px;
+  line-height: 90px;
+  text-align: center;
+}
+.my-collection .collect-lists .checkbox input {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  border: 1px solid #9da1b4;
+  border-radius: 50%;
+  outline: none;
+  -webkit-appearance:none;
+          appearance:none;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.my-collection .collect-lists .checkbox input.checked {
+  background: url(../images/icon_checkboxed_1.png) no-repeat center;
+  -webkit-background-size: auto 12px;
+          background-size: auto 12px;
+}
+
+.my-collection .collect-lists .right {
+  float: left;
+  width: 90%;
+  height: 90px;
+}
+.my-collection .collect-lists .right .img {
+  float: left;
+  width: 90px;
+  height: 90px;
+  background-color: #fff;
+}
+.my-collection .collect-lists .right .img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.my-collection .collect-lists .right .pro-descript {
+  float: left;
+  margin-left: 2%;
+  width: 66%;
+  height: 90px;
+}
+.my-collection .collect-lists .right .pro-descript .div1 {
+  overflow: hidden;
+  width: 100%;
+  font-size: 1.2em;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+.my-collection .collect-lists .right .pro-descript .div2 {
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  font-size: 1.2em;
+  color: #ff5500;
+} 
+
+/*底部*/
+.collect-footer {
+  position: fixed;
+  left: 0;
+  bottom: 50px;
+  z-index: 2;
+  width: 100%;
+  height: 50px;
+  background-color: #fafafa;
+  border-top: 1px solid #ddd;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.collect-footer .left {
+  float: left;
+  padding-left: 2%;
+  width: 23%;
+  height: 50px;
+  line-height: 50px;
+  font-size: 1.2em;
+}
+.collect-footer .left input {
+  float: left;
+  margin: 15px 10px 15px 0;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #9da1b4;
+  border-radius: 50%;
+  outline: none;
+  -webkit-appearance:none;
+          appearance:none;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.collect-footer .left input.checked {
+  background: url(../images/icon_checkboxed_1.png) no-repeat center;
+  -webkit-background-size: auto 12px;
+          background-size: auto 12px;
+} 
+.collect-footer .btn-buy,
+.collect-footer .btn-delete {
+  float: right;
+  width: 25%;
+  height: 50px;
+  line-height: 50px;
+  font-size: 1.2em;
+  color: #fff;
+  text-align: center;
+  background-color: #ff5500;
+}
+.collect-footer .btn-delete {background-color: #5f646e;}
+/*我的收藏 END*/
+
+/*关于我们*/
+.personal-center .pic-1 {width: 100%;}
+.personal-center .pic-1 img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+/*关于我们 END*/
+
+/*公司简介*/
+.company-profile .pic-1 {width: 100%;}
+.company-profile .pic-1 img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.company-profile .profile {
+  padding: 2%;
+  width: 96%;
+}
+.company-profile .profile p {
+  margin-bottom: 10px;
+  width: 100%;
+  line-height: 24px;
+  font-size: 1.2em;
+  text-indent: 2em;
+}
+/*公司简介 END*/
+
+/*健康管理师*/
+.physician {
+  padding: 2% 20%;
+  text-align: center;
+}
+.physician .doctor-lists {margin-bottom: 2%;}
+.physician .doctor-lists img {
+  width: 100%;
+  height: auto;
+}
+.physician .doctor-lists p.name {
+  width: 100%;
+  line-height: 30px;
+  font-size: 1.4em;
+}
+.physician .doctor-lists p.p2 {
+  width: 100%;
+  font-size: 1.1em;
+}
+/*健康管理师 END*/
+
+/*荣誉照片墙*/
+.honor-photos:after {clear: both;}
+.honor-photos .pic-lists {
+  float: left;
+  padding: 2%;
+  width: 50%;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+/*荣誉照片墙 END*/
+
+/*意见反馈*/
+.opinion {
+  padding: 2%;
+  width: 96%;
+}
+.opinion .title {
+  line-height: 30px;
+  font-size: 1.2em;
+}
+.opinion textarea {
+  padding: 2%;
+  width: 100%;
+  height: 150px;
+  font-size: 1.1em;
+  outline: none;
+  border: 1px solid #72d377;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.opinion input {
+  margin: 10px auto;
+  width: 100%;
+  height: 40px;
+  line-height:40px;
+  font-size: 1.2em;
+  color: #fff;
+  background-color: #72d377;
+  border: none;
+}
+/*意见反馈 END*/
+
+/*购物车*/
+
+/*头部*/
+.login-head .shop-edit {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.my-collection .collect-lists .right .pro-descript .price {
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  font-size: 1.2em;
+}
+.my-collection .collect-lists .right .pro-descript .price p.p1 {
+  float: left;
+  color: #ff5500;
+}
+.my-collection .collect-lists .right .pro-descript .price p.p2 {
+  float: right;
+}
+
+.collect-footer .total-amount {
+  float: left;
+  width: 50%;
+  height: 50px;
+  line-height: 50px;
+  font-size: 1.1em;
+}
+.collect-footer .total-amount strong {color: #ff5500;}
+/*购物车 END*/
+
+/*确认订单*/
+
+/*套餐*/
+.confirm-order .sec1 {
+  padding: 2%;
+  width: 96%;
+  background-color: #fff;
+}
+.confirm-order .sec1 .package {
+  width: 100%;
+  border-bottom: 1px solid #ddd;
+}
+.confirm-order .sec1 .package .top {
+  overflow: hidden;
+  width: 100%;
+}
+.confirm-order .sec1 .package .top .left {
+  float: left;
+  width: 20%;
+  height: 60px;
+  text-align: center;
+}
+.confirm-order .sec1 .package .top .left .img {
+  margin: 0 auto;
+  width: 60px;
+  height: 60px;
+}
+.confirm-order .sec1 .package .top .left .img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.confirm-order .sec1 .package .top .right {
+  position: relative;
+  float: left;
+  margin-left: 2%;
+  padding-right: 30px;
+  width: 78%;
+  height: 60px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+/*关闭按钮*/
+.confirm-order .sec1 .package .top .right .btn-close {
+  position: absolute;
+  right: 5px;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  background: url(../images/icon_package_close_1.png) no-repeat center;
+  -webkit-background-size: auto 20px;
+          background-size: auto 20px;
+}
+
+.confirm-order .sec1 .package .top .right .div1 {
+  overflow: hidden;
+  width: 100%;
+  height: 40px;
+  line-height: 20px;
+  font-size: 1.2em;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.confirm-order .sec1 .package .top .right .div2 {
+  width: 100%;
+  height: 20px;
+  line-height: 20px;
+  font-size: 1.1em;
+  color: #ff5000;
+}
+
+/*数量选择*/
+.confirm-order .sec1 .package .choose-num {
+  width: 100%;
+  height: 30px;
+}
+.confirm-order .sec1 .package .choose-num .num {
+  float: left;
+  line-height: 30px;
+  font-size: 1.2em;
+}
+.confirm-order .sec1 .package .numbers {
+  float: right;
+  margin: 4px 0;
+  width: 82px;
+  height: 22px;
+  border: 1px solid #ddd;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.confirm-order .sec1 .package .numbers a {
+  display: block;
+  float: left;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  background: #fafafa;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.confirm-order .sec1 .package .numbers a.add {border-left: 1px solid #ddd;}
+.confirm-order .sec1 .package .numbers a.less {border-right: 1px solid #ddd;}
+
+.confirm-order .sec1 .package .numbers input {
+  display: block;
+  float: left;
+  width: 40px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  border: none;
+}
+
+/*收货人姓名*/
+.confirm-order .sec1 .receiver-name {
+  padding: 2% 0;
+  width: 100%;
+  height: 60px;
+  border-bottom: 1px solid #ddd;
+}
+.confirm-order .sec1 .receiver-name label {
+  float: left;
+  width: 25%;
+  height: 60px;
+  line-height: 30px;
+  font-size: 1.2em;
+}
+.confirm-order .sec1 .receiver-name label span {color: #ff0000;}
+.confirm-order .sec1 .receiver-name .right {
+  float: left;
+  width: 75%;
+  height: 60px;
+}
+.confirm-order .sec1 .receiver-name .right .inp1 {
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  font-size: 1.2em;
+  border: none;
+  border-bottom: 1px solid #ddd;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.confirm-order .sec1 .receiver-name .right .gender {
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+}
+.confirm-order .sec1 .receiver-name .right .gender strong {margin-right: 20px;}
+.confirm-order .sec1 .receiver-name .right .gender input {
+  width: 15px;
+  height: 15px;
+  vertical-align: middle;
+  border: 1px solid #cfcfcf;
+  border-radius: 50%;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  -webkit-appearance:none;
+          appearance:none;
+}
+.confirm-order .sec1 .receiver-name .right .gender input.checked {
+  background: url(../images/icon_checkboxed_2.png) no-repeat center;
+  -webkit-background-size: auto 15px;
+          background-size: auto 15px;
+  border: none;
+} 
+
+/*地址*/
+.confirm-order .sec1 .receiver-name .right select {
+  padding-right: 20px;
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  font-size: 1.2em;
+  background: url(../images/icon_next_1.png) no-repeat right center;
+  -webkit-background-size: auto 15px;
+          background-size: auto 15px;
+  border: none;
+  outline: none;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  -webkit-appearance:none;
+          appearance:none;
+}
+.confirm-order .sec1 .receiver-name .right .inp2 {
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  font-size: 1.2em;
+  border: none;
+  border-top: 1px solid #ddd;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+/*手机号码*/
+.confirm-order .sec1 .receiver-phone {
+  padding: 2% 0;
+  width: 100%;
+  height: 30px;
+  border-bottom: 1px solid #ddd;
+}
+.confirm-order .sec1 .receiver-phone label {
+  float: left;
+  width: 25%;
+  height: 30px;
+  line-height: 30px;
+  font-size: 1.2em;
+}
+.confirm-order .sec1 .receiver-phone label span {color: #ff0000;}
+.confirm-order .sec1 .receiver-phone .right-inp {
+  float: left;
+  width: 75%;
+  height: 30px;
+  line-height: 30px;
+  font-size: 1.2em;
+  border: none;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+/*使用积分*/
+.confirm-order .use-points {
+  margin: 4% auto;
+  padding: 2%;
+  width: 96%;
+  height: 30px;
+  line-height: 30px;
+  background-color: #fff;
+}
+.confirm-order .use-points label {
+  float: left;
+  height: 30px;
+  font-size: 1.2em;
+}
+.confirm-order .use-points label span {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  font-size: 12px;
+  color: #fff;
+  text-align: center;
+  background-color: #92bd6a;
+  border-radius: 50%;
+}
+.confirm-order .use-points .right {
+  float: right;
+  padding-right: 20px;
+  height: 30px;
+  font-size: 1.2em;
+  background: url(../images/icon_next_1.png) no-repeat right center;
+  -webkit-background-size: auto 15px;
+          background-size: auto 15px;
+}
+.confirm-order .use-points .right span {color: #ff980b;}
+
+/*商品清单*/
+.confirm-order .product-listing {
+  padding: 2%;
+  width: 96%;
+  background-color: #fff;
+}
+.confirm-order .product-listing .title {
+  margin-bottom: 10px;
+  color: #999;
+}
+.confirm-order .product-listing .div1 {
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  border-bottom: 1px solid #ddd;
+}
+.confirm-order .product-listing .div1 strong {
+  float: left;
+  height: 40px;
+}
+.confirm-order .product-listing .div1 strong.str1 {
+  overflow: hidden;
+  width: 50%;
+  -webkit-text-overflow: ellipsis;
+          text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.confirm-order .product-listing .div1 strong.str2 {
+  width: 25%;
+  text-align: right;
+} 
+.confirm-order .product-listing .div2 {
+  overflow: hidden;
+  width: 100%;
+  border-bottom: 1px solid #ddd;
+}
+.confirm-order .product-listing .div2 strong {
+  float: left;
+  height: 30px;
+  line-height: 30px;
+}
+.confirm-order .product-listing .div2 strong.str1 {
+  overflow: hidden;
+  width: 50%;
+  -webkit-text-overflow: ellipsis;
+          text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.confirm-order .product-listing .div2 strong.str2 {
+  width: 25%;
+  text-align: right;
+}
+.confirm-order .product-listing .div3 {
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  border-bottom: 1px solid #ddd;
+}
+.confirm-order .product-listing .div3 .str1 {
+  float: left;
+}
+.confirm-order .product-listing .div3 .str2 {
+  float: right;
+}
+
+/*底部*/
+.package-foot {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  font-size: 16px;
+  color: #fff;
+  text-align: center;
+  background-color: #f90;
+  border: none;
+}
+/*确认订单 END*/
+
+/*商城*/
+.mall .channel-lists {
+  width: 100%;
+}
+.mall .channel-lists img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.mall .channel-lists a {
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  font-size: 1.2em;
+  color: #fff;
+  text-align: center;
+  background-color: #314f69;
+}
+/*商城 END*/
+
+/*套餐列表*/
+.package-lists {
+  padding: 2% 0;
+  width: 100%;
+}
+.package-lists .tips {
+  margin: 0 auto;
+  width: 90%;
+  font-size: 1.1em;
+  text-align: center;
+}
+
+.package-lists .package {
+  overflow: hidden;
+  margin: 2% auto;
+}
+.package-lists .package .list {
+  float: left;
+  margin: 2% 0 0 2%;
+  width: 47%;
+  background-color: #fff;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.package-lists .package .list .div1 {
+  padding: 0 2%;
+  width: 96%;
+}
+.package-lists .package .list .div2 {
+  padding: 0 2%;
+  width: 96%;
+  height: 30px;
+  line-height: 30px;
+  color: #f00;
+}
+
+/*查看更多*/
+.package-lists .look-more {
+  margin: 2% 0;
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  color: #72d377;
+  text-align: center;
+  background-color: #f1f0f0;
+}
+/*套餐列表 END*/
+
+/*套餐详情*/
+.package-details .top-pic-1 {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.package-details .sec1 {
+  overflow: hidden;
+  margin-bottom: 4%;
+  padding: 2%;
+  width: 96%;
+  background-color: #fff;
+}
+.package-details .sec1 .left {
+  float: left;
+  width: 85%;
+}
+.package-details .sec1 .left .p1 {
+  font-size: 1.2em;
+}
+.package-details .sec1 .left .p2 {
+  display: block;
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  color: #999;
+}
+.package-details .sec1 .left .p3 {
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  font-size: 1.2em;
+  color: #ff5000;
+}
+
+.package-details .sec1 .right {
+  float: right;
+  padding-top: 30px;
+  width: 15%;
+  text-align: center;
+  background: url(../images/icon_share_1.png) no-repeat center top;
+  -webkit-background-size: auto 20px;
+          background-size: auto 20px;
+  border-left: 1px solid #ddd;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+/*可用积分*/
+.package-details .available-points {
+  margin-bottom: 4%;
+  padding: 2%;
+  width: 96%;
+  height: 40px;
+  line-height: 40px;
+  background-color: #fff;
+}
+.package-details .available-points .left {
+  float: left;
+  font-size: 1.2em;
+}
+.package-details .available-points .left span {color: #ff5000;}
+.package-details .available-points .right {
+  float: right;
+  font-size: 1.2em;
+}
+
+/*支付方式*/
+.package-details .pay-ways {
+  margin-bottom: 4%;
+  padding: 2%;
+  width: 96%;
+  background-color: #fff;
+}
+.package-details .pay-ways .div1 {
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  font-size: 1.1em;
+}
+.package-details .pay-ways .div1 span {color: #999;}
+
+.package-details .pay-ways .div2 {
+  width: 100%;
+  height: 30px;
+}
+.package-details .pay-ways .div2 label {
+  float: left;
+  height: 30px;
+  line-height: 30px;
+}
+.package-details .pay-ways .div2 .img1 {
+  float: left;
+  margin: 3px 5px 3px 0;
+  width: 50px;
+  height: 24px;
+  border: 1px solid #ddd;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.package-details .pay-ways .div2 .img2 {
+  width: 32px;
+} 
+.package-details .pay-ways .div2 .img1 img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.package-details .pay-ways .div2 p.active {border: 1px solid #af0100;} 
+
+/*详情*/
+.package-details .sec3 {
+  width: 100%;
+  background-color: #fff;
+}
+#tab-ul {
+  width: 100%;
+  height: 40px;
+  border-bottom: 1px solid #ddd;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+#tab-ul li {
+  float: left;
+  width: 50%;
+  height: 40px;
+}
+#tab-ul li a {
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  font-size: 1.2em;
+  text-align: center;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+#tab-ul li.active a {
+  color: #af0100;
+  border-bottom: 2px solid #af0100;
+}
+
+#tab-ol li {
+  display: none;
+  padding: 2%;
+  width: 96%;
+  min-height: 100px;
+}
+/*套餐详情 END*/
+
+/*zhangji*/
+.enter-info .select-btn{  width: 45%;
+  height: 32px;
+  line-height: 32px;
+  font-size: 1.2em;
+  color: #fff;
+  background-color: #666666;
+  border: none;
+  border-radius: 3px;}
+  
+  .enter-info  .selected{  background-color: #72d377;}
