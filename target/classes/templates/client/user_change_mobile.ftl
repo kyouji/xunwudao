@@ -48,7 +48,7 @@ $(document).ready(function(){
             success : function(data) {  
                 if(data.code==1){
                 	if(typeof(data.addall != "undefined")){
-                		confirm(data.msg){
+                		if(confirm(data.msg)){
                 			addall(data.addall);
                 		}
                 	}else{
@@ -128,7 +128,7 @@ $(document).ready(function(){
     }); 
 });
 
-function addall(mobile)
+function addall(mobile){
 	var mobile = mobile;
 	$.ajax({  
             url : "/user/addall",  
@@ -148,6 +148,7 @@ function addall(mobile)
                 }
              }   
         });
+}
 
 function tip() 
 {  

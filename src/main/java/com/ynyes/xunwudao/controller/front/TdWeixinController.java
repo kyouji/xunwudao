@@ -210,7 +210,7 @@ public class TdWeixinController {
      * @return
 	 * @throws ParseException 
      */
-    @RequestMapping(value = "/weixin/paytest")
+    @RequestMapping(value = "/weixin/pay")
     public String weixinPay(String orderNumber, ModelMap map,HttpServletRequest req,String state,String code) throws ParseException
     {
         String username = (String) req.getSession().getAttribute("username");
@@ -404,6 +404,8 @@ public class TdWeixinController {
 				map.addAttribute("paySign", returnsign);
 				map.addAttribute("orderId", order.getId());
 				
+				map.addAttribute("order", order);
+				
 			}
 		}
 		catch (IOException e)
@@ -413,7 +415,7 @@ public class TdWeixinController {
 
         map.addAttribute("payForm", payForm);
 
-        return "/client/user_order_list";
+        return "/client/user_order_pay";
     }
 	
 	
@@ -456,9 +458,11 @@ public class TdWeixinController {
 				if (null != tdOrder)
 				{
 					if(null != tdOrder.getStatusId() && tdOrder.getStatusId()==2){
+						System.out.println("------------0321、tdOrder statusId！"+tdOrder.getStatusId());
 						tdOrder.setStatusId(4L);
 						tdOrder.setPayTime(new Date());
 						if(null != tdOrder.getOrderGoodsList()){
+							System.out.println("------------0321、orderGoodsList 不为空！！");
 							for(TdOrderGoods item : tdOrder.getOrderGoodsList()){
 								item.setTime(new Date());
 								item.setUsername(tdOrder.getUsername());
@@ -468,13 +472,18 @@ public class TdWeixinController {
 						tdOrderService.save(tdOrder);
 						
 						//分销处理
+						System.out.println("------------0321、开始分销处理！");
+						System.out.println("------------0321、总价！"+tdOrder.getTotalGoodsPrice());
+						System.out.println("------------0321、用户id！"+tdOrder.getUserId());
 						if(null != tdOrder.getTotalGoodsPrice() && tdOrder.getTotalGoodsPrice() > 0 && null != tdOrder.getUserId()){
+							System.out.println("------------0321、检测用户！！");
 							TdUser user = tdUserService.findOne(tdOrder.getUserId());
 							System.out.println("user:"+user.getUsername());
 							if(null != user){
-								
+								System.out.println("------------0321、用户存在！");
 								//消费总额
 								Double spend = 0.00;
+								System.out.println("------------0321、user。getspend！"+user.getSpend());
 								if(null != user.getSpend()){
 									spend=user.getSpend();
 								}
@@ -866,5 +875,129 @@ public String getTicket(String accessToken){
 }
     /*------------------------------------微信js接口-------------------------------------*/
 
+
+/*111111111-TESTING!!!!!!!!!!!!!!!!*/
+@RequestMapping(value = "/notify/test")
+public void wx_notifyTEST(String orderNumber,HttpServletResponse response,HttpServletRequest request) throws IOException
+{
+	System.out.println("MDJ: 回调方法触发！\n");
+	BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
 	
+	String line = null;
+	String return_code = null;
+	String result_code = null;
+	String noncestr = null;
+	String out_trade_no = null;
+
+	try {
+		orderNumber = "20160321174752252XWD516";
+			TdOrder tdOrder = tdOrderService.findByOrderNumber(orderNumber);
+
+			if (null != tdOrder)
+			{
+				if(null != tdOrder.getStatusId() && tdOrder.getStatusId()==2){
+					System.out.println("------------0321、tdOrder statusId！"+tdOrder.getStatusId());
+					tdOrder.setStatusId(4L);
+					tdOrder.setPayTime(new Date());
+					if(null != tdOrder.getOrderGoodsList()){
+						System.out.println("------------0321、orderGoodsList 不为空！！");
+						for(TdOrderGoods item : tdOrder.getOrderGoodsList()){
+							item.setTime(new Date());
+							item.setUsername(tdOrder.getUsername());
+							tdOrderGoodsService.save(item);
+						}
+					}
+					tdOrderService.save(tdOrder);
+					
+					//分销处理
+					System.out.println("------------0321、开始分销处理！");
+					System.out.println("------------0321、总价！"+tdOrder.getTotalGoodsPrice());
+					System.out.println("------------0321、用户id！"+tdOrder.getUserId());
+					if(null != tdOrder.getTotalGoodsPrice() && tdOrder.getTotalGoodsPrice() > 0 && null != tdOrder.getUserId()){
+						System.out.println("------------0321、检测用户！！");
+						TdUser user = tdUserService.findOne(tdOrder.getUserId());
+						System.out.println("user:"+user.getUsername());
+						if(null != user){
+							System.out.println("------------0321、用户存在！");
+							//消费总额
+							Double spend = 0.00;
+							System.out.println("------------0321、user。getspend！"+user.getSpend());
+							if(null != user.getSpend()){
+								spend=user.getSpend();
+							}
+							user.setSpend(spend+tdOrder.getTotalPrice());
+							tdUserService.save(user);
+							
+							Long pOne = (long)(tdOrder.getTotalPrice()*100* tdSettingService.findTopBy().getRegisterSuccessPoints()); //第一层应得积分 
+							Long pTwo = (long)(tdOrder.getTotalGoodsPrice()*100* tdSettingService.findTopBy().getRegisterSharePoints()); //第二层应得积分 
+							System.out.println("pOne:"+pOne);
+							System.out.println("pTwo:"+pTwo);
+							//上一级推荐人
+							TdUser userOne = tdUserService.findOne(user.getUpUserOne());
+							if(null != userOne){
+								if(null != userOne.getTotalPoints()){
+									userOne.setTotalPoints(userOne.getTotalPoints()+pOne);
+								}else{
+									userOne.setTotalPoints(pOne);
+								}
+								
+								tdUserService.save(userOne);
+							}
+							//二级推荐人
+							TdUser userTwo = tdUserService.findOne(user.getUpUserTwo());
+							if(null != userTwo){
+								if(null != userTwo.getTotalPoints()){
+									userTwo.setTotalPoints(userTwo.getTotalPoints()+pTwo);
+								}else{
+									userTwo.setTotalPoints(pTwo);
+								}
+								
+								tdUserService.save(userTwo);
+							}
+						}
+					}
+				}
+				else{
+					System.out.println("订单不存在！！！");
+				}
+				
+			
+			
+			String content = "<xml>\n"
+					+ "<result_code>SUCCESS</result_code>\n"
+					+ "<return_code></return_code>\n"
+					+ "</xml>\n";
+
+			System.out.print("MDJ: return xml=" + content + "\n");
+
+			try {
+				// 把xml字符串写入响应
+				byte[] xmlData = content.getBytes();
+
+				response.setContentType("text/xml");
+				response.setContentLength(xmlData.length);
+
+				ServletOutputStream os = response.getOutputStream();
+				os.write(xmlData);
+
+				os.flush();
+				os.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+//			HttpGet httpGet = new HttpGet("http://kq.hz023.com/DoubleEgg/ApiActivity/BuyReturn?telephone=" + request.getSession().getAttribute("username") + "&status=1&commondityId=" + request.getSession().getAttribute("huodongGoodsId"));
+//			if (request.getSession().getAttribute("dianxinhuodong") != null) 
+//			{
+//				String accessTokenUrl = "http://kq.hz023.com/GxDoubleEgg/ApiActivity/BuyReturn?telephone=" + request.getSession().getAttribute("username") + "&status=1&commondityId=" + request.getSession().getAttribute("huodongGoodsId");
+//				System.out.println("Madejing: accessTokenUrl = " + accessTokenUrl);
+//				String result = com.ynyes.csb.util.HttpRequest.sendGet(accessTokenUrl, null);
+//				System.out.println("Madejing:->dianxinfanhui:" +result);
+//			}
+		}
+	} catch (Exception e) {
+		e.printStackTrace();
+	} finally {
+		br.close();
+	}
+}
 }

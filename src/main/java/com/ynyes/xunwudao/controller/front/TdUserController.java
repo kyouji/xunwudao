@@ -152,6 +152,8 @@ public class TdUserController {
 					newUser.setSex((boolean)userInfo.get("sex"));
 					newUser.setHeadImageUrl(userInfo.get("headimgurl").toString());
 					newUser.setTotalPoints(0L);
+					newUser.setStatusId(1L);
+					newUser.setRegisterTime(new Date());
 					newUser.setLastLoginTime(new Date());
 					newUser.setOpenid(openid);
 					newUser.setUnionid(userInfo.get("unionid").toString());

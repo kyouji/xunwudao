@@ -141,8 +141,7 @@
   }
 </style>
 <!-- js -->
-		<script language="javascript" src="http://res.mail.qq.com/mmr/static/lib/js/jquery.js" type="text/javascript"></script>
-		<script language="javascript" src="http://res.mail.qq.com/mmr/static/lib/js/lazyloadv3.js" type="text/javascript"></script>
+
 <script type="text/javascript" src="/client/js/jquery-1.11.3.min.js"></script>
 <script type="text/javascript">
   $(function(){
@@ -180,7 +179,7 @@ function pay(orderMoney,orderNumber){
 	{
 		if(orderMoney > 0){
 			alert("开始微信支付！");
-			location.href='/weixin/paytest?orderNumber='+orderNumber;
+			location.href='/weixin/pay?orderNumber='+orderNumber;
 		}else{
 			location.href='/user/pay/free?money=0.00&orderNumber='+orderNumber;
 		}
@@ -284,7 +283,7 @@ function onBridgeReady(){
 			          	<#--
 			            <a href="<#if totalPrice?? && totalPrice gt 0>/user/pay/alipay/recharge?money=${totalPrice?string("0.00")}&orderNumber=${order.orderNumber!''}<#else>/user/pay/free?money=0.00&orderNumber=${order.orderNumber!''}</#if>">确认付款</a>
 			            -->
-			            <a href="javascript:pay('${totalPrice?string("0.00")}','${order.orderNumber!''}');">确认付款</a>
+			            <a href="javascript:pay('${totalPrice?string("0.00")}','${order.orderNumber!''}');">去付款</a>
 			            <a href="/order/cancel?orderNumber=${order.orderNumber!''}&state=${order.statusId!''}">取消订单</a>
 			          </section>
 			        </article>
@@ -376,6 +375,7 @@ function onBridgeReady(){
                 </#if>
             </#list>
         </#if>
+        </li>
     </ol>
   </article>
   <!-- 我的订单 END -->

@@ -168,7 +168,7 @@ function usePoint()
 		/*基本信息*/
 		var realName = $("#realName").val();  //姓名
 		var sex = $("input[name='sex']:checked").val(); //性别
-		var areaId = $("input[name='areaId']:selected").val(); //区域id
+		var areaId = $("#areaId").val(); //区域id
 		var address = $("#address").val();
 		var mobile = $("#mobile").val();
 		var idCard = $("#idCard").val();
