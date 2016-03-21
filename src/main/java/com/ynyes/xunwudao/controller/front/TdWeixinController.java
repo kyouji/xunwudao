@@ -413,7 +413,7 @@ public class TdWeixinController {
 
         map.addAttribute("payForm", payForm);
 
-        return "redirect:/user/order/list/2";
+        return "/client/user_order_list";
     }
 	
 	

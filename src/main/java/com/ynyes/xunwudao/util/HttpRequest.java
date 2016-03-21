@@ -106,6 +106,8 @@ public class HttpRequest {
    public static  Map<String,String> connectWeiXinInterface(String interfaceUrl,String json){
 	        URL url;
 	        Map<String, String> map = new HashMap<String, String>();
+	        System.out.println("-+---------url:"+interfaceUrl);
+	        System.out.println("---------json:"+json);
 	        OutputStream os = null;
 	        InputStream is = null;
 	       try {
@@ -135,6 +137,7 @@ public class HttpRequest {
 	           System.out.println("请求返回结果:"+result);
 	           os.flush();
 	       } catch (Exception e) {
+	    	   System.out.println("------POST请求失败。");
 	           e.printStackTrace();
 	       } finally{
 		      try {
