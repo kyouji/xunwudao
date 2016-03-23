@@ -141,6 +141,28 @@ function tip()
     }  
 }
 
+function weixin(){
+	//判断是否微信打开
+	var ua = navigator.userAgent.toLowerCase();
+	
+	if(ua.match(/MicroMessenger/i)=="micromessenger") 
+	{
+		location.href="/weixin/login";
+	}
+	else{
+		var obj = new WxLogin({
+                              id:"login_container", 
+                              appid: "${appId!''}", 
+                              scope: "snsapi_login", 
+                              redirect_uri: "http://www.xwd33.com",
+                              state: "state",
+                              style: "",
+                              href: ""
+                            });
+                            
+        location.href='https://open.weixin.qq.com/connect/qrconnect?appid=${appId!''}&redirect_uri=http%3A%2F%2Fwww.xwd33.com&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect'                    
+	}
+}
 </script>
 </head>
 <body>
@@ -180,6 +202,28 @@ function tip()
         <input class="btn-login" id="reg_submit" type="button"  value="验证并注册" >
       </section>
     </form>
+        <!-- 其他方式登录 -->
+    <section class="other-ways" style="margin-top:2%;">
+      <div class="title">其他方式登录</div>
+      <ul>
+        <li>
+          <a href="javascript:weixin();">
+            <img src="/client/images/icon_login_weixin.png" alt="微信登录">
+            <#--<a href="http://weixin.qq.com/r/OEzUzGjEzTWyrSyv9xkq"><img src="/client/images/icon_login_phone.png"></a>-->
+          </a>
+        </li>
+        <li>
+          <a href="/login/mobile?goodsId=<#if goodsId??>${goodsId?c}</#if>">
+            <img src="/client/images/icon_login_phone.png" alt="手机登录">
+          </a>
+        </li>
+        <li>
+          <a href="/qq/login?rfCode=<#if rfCode??&&rfCode?length gt 0>${rfCode}</#if>">
+            <img src="/client/images/icon_login_qq.png" alt="QQ登录">
+          </a>
+        </li>
+      </ul>
+    </section>
   </article>
   <!-- 注册 END -->
 

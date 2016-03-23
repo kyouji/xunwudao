@@ -75,7 +75,7 @@ public class TdRegController {
 			return "/client/reg";
 		
 		}
-		return "redirect:/";
+		return "redirect:/user/center";
 	}
 
 	@RequestMapping(value = "/logutil")
@@ -373,7 +373,7 @@ public class TdRegController {
 		Random random = new Random();
 		String smscode = random.nextInt(9000) + 1000 + "";
 		HttpSession session = request.getSession();
-		session.setAttribute("SMSCODE", smscode);
+		session.setAttribute("SMSCODE------------------------", smscode);
 		res.put("smscode", smscode); //测试用
 		String info = "【循伍道助健康】验证码:" + smscode + "，健康交给循伍道，活到100不算老，欢迎你注册循伍道健康管理VIP会员，此验证码三分钟内有效。";
 		System.err.println(smscode);

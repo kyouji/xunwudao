@@ -20,7 +20,7 @@ public class SiteMagConstant {
     	String operation = props.getProperty("os.name");
     	if (operation.contains("Linux"))
     	{
-    		 backupPath = "/mnt/root/backup/xunwudao";
+    		 backupPath = "/mnt/root/backup/xunwudao/";
     		 imagePath = "/mnt/root/images/csb/";
     		
 //   		 backupPath = "/mnt/root/test/backup/";

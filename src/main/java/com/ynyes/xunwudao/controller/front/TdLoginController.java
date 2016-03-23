@@ -604,10 +604,10 @@ public class TdLoginController extends HttpServlet {
 	 * Step1：获取Authorization Code
 	 */
 	@RequestMapping(value="/qq/login",method = RequestMethod.GET)
-	public String infoQQLogin(HttpServletRequest reqest, HttpServletResponse response){
+	public String infoQQLogin(String rfCode, HttpServletRequest reqest, HttpServletResponse response){
 		try {
 			return "redirect:https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id="
-								+Configure.getClientId()+"&redirect_uri="+URLEncoder.encode("http://www.xwd33.com/qq/return","utf-8")
+								+Configure.getClientId()+"&redirect_uri="+URLEncoder.encode("http://www.xwd33.com/qq/return?rfCode="+rfCode,"utf-8")
 								+"&state=STATE&display=mobile";
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -620,7 +620,7 @@ public class TdLoginController extends HttpServlet {
 	 * QQ互联回调
 	 */
 	@RequestMapping(value="/qq/return",method = RequestMethod.GET)
-	public String qqGetAccessToken(String code, String state, HttpServletRequest request, HttpServletResponse response){
+	public String qqGetAccessToken(String code, String state, String rfCode, HttpServletRequest request, HttpServletResponse response){
 		Map<String,String> userinfo = null;
 		Map<String,String> token = null;
 		String qqOpenid = null;
@@ -662,7 +662,10 @@ public class TdLoginController extends HttpServlet {
 				        tdUserService.save(newUser);
 				        
 						//建立分销关系
-				        String rfCode = (String)request.getSession().getAttribute("rfCode");
+				        if(null == rfCode || rfCode.equals("")){
+				        	 rfCode = (String)request.getSession().getAttribute("rfCode");
+				        }
+				        
 				        if(null != rfCode && !rfCode.equals("")){
 								//第一级推荐人id
 								Long userId = Long.parseLong(rfCode.substring(0, 4));
@@ -674,7 +677,7 @@ public class TdLoginController extends HttpServlet {
 									
 									//让新用户登陆后跳转到分享的商品详情页面
 									if( null != goods){
-										 url = "/goods/detail/"+goods.getId();
+										 url = "/goods/detail?id="+goods.getId();
 									
 									}
 								}

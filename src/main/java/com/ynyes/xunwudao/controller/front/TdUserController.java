@@ -28,6 +28,7 @@ import com.ynyes.xunwudao.entity.TdApply;
 import com.ynyes.xunwudao.entity.TdApplyType;
 import com.ynyes.xunwudao.entity.TdArea;
 import com.ynyes.xunwudao.entity.TdDemand;
+import com.ynyes.xunwudao.entity.TdGoods;
 import com.ynyes.xunwudao.entity.TdUser;
 import com.ynyes.xunwudao.service.TdApplyService;
 import com.ynyes.xunwudao.service.TdApplyTypeService;
@@ -35,6 +36,7 @@ import com.ynyes.xunwudao.service.TdAreaService;
 import com.ynyes.xunwudao.service.TdCommonService;
 import com.ynyes.xunwudao.service.TdDemandService;
 import com.ynyes.xunwudao.service.TdEnterTypeService;
+import com.ynyes.xunwudao.service.TdGoodsService;
 import com.ynyes.xunwudao.service.TdOrderService;
 import com.ynyes.xunwudao.service.TdUserService;
 
@@ -72,9 +74,12 @@ public class TdUserController {
 	
 	@Autowired
 	private TdOrderService tdOrderService;
+	
+	@Autowired
+	private TdGoodsService tdGoodsService;
 
 	@RequestMapping(value = "/user/center")
-	public String user(String code, Long QQ, HttpServletRequest req, ModelMap map) {
+	public String user(String code, Long QQ, Long WX,HttpServletRequest req, ModelMap map) {
 		String username = (String) req.getSession().getAttribute("username");
 		if (null == username) {
 			return "redirect:/login";
@@ -82,6 +87,9 @@ public class TdUserController {
 
 		if(null != QQ){
 			map.addAttribute("QQ", QQ);
+		}
+		if(null != WX){
+			map.addAttribute("WX", WX);
 		}
 		tdCommonService.setHeader(map, req);
 
@@ -118,13 +126,13 @@ public class TdUserController {
 	}
 	
 	@RequestMapping(value = "/weixin/login")
-	public String weixinLogin(HttpServletRequest req){
-		return "redirect:https://open.weixin.qq.com/connect/oauth2/authorize?appid="+Configure.getAppid()+"&redirect_uri=http%3A%2F%2Fwww.xwd33.com/weixin/user/center&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+	public String weixinLogin(String rfCode, HttpServletRequest req){
+		return "redirect:https://open.weixin.qq.com/connect/oauth2/authorize?appid="+Configure.getAppid()+"&redirect_uri=http%3A%2F%2Fwww.xwd33.com/weixin/user/center?rfCode="+rfCode+"&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
 	}
 	
 	//微信直接登陆
 	@RequestMapping(value = "/weixin/user/center")
-	public String weixinUserCenter(String code, HttpServletRequest req, ModelMap map) {
+	public String weixinUserCenter(String code, String rfCode, HttpServletRequest req, ModelMap map) {
 		System.out.println("WEIXIN USER CENTER");
 		tdCommonService.setHeader(map, req);
 		
@@ -167,6 +175,47 @@ public class TdUserController {
 					map.addAttribute("user", newUser);
 					req.getSession().setMaxInactiveInterval(60 * 60 * 2);
 					req.getSession().setAttribute("username", newUser.getUsername());
+					
+					 if(null != rfCode && !rfCode.equals("")){
+							//第一级推荐人id
+							Long userId = Long.parseLong(rfCode.substring(0, 4));
+							String url = null;
+							//商品id 
+							if(rfCode.length() > 7){
+								Long goodsId = Long.parseLong(rfCode.substring(7));
+								TdGoods goods = tdGoodsService.findOne(goodsId);
+								
+								//让新用户登陆后跳转到分享的商品详情页面
+								if( null != goods){
+									 url = "/goods/detail?id="+goods.getId();
+								
+								}
+							}
+							TdUser userOne = tdUserService.findOne(userId);
+							
+							
+							if(null == userOne){
+								System.out.println("userOne is NULL");
+							}
+							if(null != userOne){
+								//第一级推荐人
+								newUser.setUpUserOne(userOne.getId());
+								//第二级推荐人
+								Long userTwoUpId = userOne.getUpUserOne();
+								if(null != userTwoUpId){
+									TdUser userTwo = tdUserService.findOne(userTwoUpId);
+									if(null != userTwo){
+										newUser.setUpUserTwo(userTwo.getId());
+									}
+								}
+							}
+			        
+				        if(null != url && !url.equals("")){
+				        	return "redirect:"+url;
+				        }else{
+				        	return "redirect:/user/center?WX=1";
+				        }
+			        }
 				}
 				else{
 					tdUser.setLastLoginTime(new Date());

@@ -163,9 +163,9 @@ function collectRemove(id){
 });
 
 var title = "健康交给循伍道，活到100不算老。";
-var desc = "注册享优惠，<#if rfCode??>我的推荐码是：${rfCode!''}。</#if>【${tdGoods.title!''}】";
+var desc = "【${tdGoods.title!''}】<#if rfCode??>我的推荐码是：${rfCode!''}。</#if>";
 var link="http://www.xwd33.com/reg?rfCode=<#if rfCode??>${rfCode!''}</#if>";
-var imgUrl="<#if tdGoods.coverImageUri?? && tdGoods.coverImageUri?length gt 0>${tdGoods.coverImageUri}<#else>/client/images/pic_product_1.jpg</#if>";
+var imgUrl="http://www.xwd33.com<#if tdGoods.coverImageUri?? && tdGoods.coverImageUri?length gt 0>${tdGoods.coverImageUri}<#else>/client/images/pic_product_1.jpg</#if>";
 
 wx.ready(function(){    
     // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
@@ -175,7 +175,8 @@ wx.ready(function(){
                 'onMenuShareAppMessage',
                 'onMenuShareQQ',
                 'onMenuShareWeibo',
-                'onMenuShareQZone'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+                'onMenuShareQZone',
+                'showOptionMenu'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
     success: function(res) {
         // 以键值对的形式返回，可用的api值true，不可用为false
         // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
@@ -206,8 +207,9 @@ wx.ready(function(){
     });
    
     // 监听“分享到朋友圈”按钮点击、自定义分享内容及分享结果接口
+document.querySelector('#onMenuShareTimeline').onclick = function () {
     wx.onMenuShareTimeline({
-      title: title,
+      title: title+desc,
       link: link,
       imgUrl: imgUrl,
       trigger: function (res) {
@@ -215,16 +217,16 @@ wx.ready(function(){
        // alert('用户点击分享到朋友圈');
       },
       success: function (res) {
-       // alert('已分享');
+        alert('已分享');
       },
       cancel: function (res) {
-       // alert('已取消');
+        alert('已取消');
       },
       fail: function (res) {
-       // alert(JSON.stringify(res));
+        alert(JSON.stringify(res));
       }
     });
-    
+};
     // 监听“分享到QQ”按钮点击、自定义分享内容及分享结果接口
      wx.onMenuShareQQ({
       title: title,
@@ -238,15 +240,29 @@ wx.ready(function(){
        // alert(JSON.stringify(res));
       },
       success: function (res) {
-       // alert('已分享');
+        alert('已分享');
       },
       cancel: function (res) {
-       // alert('已取消');
+        alert('已取消');
       },
       fail: function (res) {
-       // alert(JSON.stringify(res));
+        alert(JSON.stringify(res));
       }
     });
+    
+    // 监听“分享到QQ空间”按钮点击、自定义分享内容及分享结果接口
+    wx.onMenuShareQZone({
+    title: title,// 分享标题
+    desc: desc,// 分享描述
+    link: link, // 分享链接
+    imgUrl: 'imgUrl', // 分享图标
+    success: function () { 
+       alert('已分享');// 用户确认分享后执行的回调函数
+    },
+    cancel: function () { 
+        alert('已取消');// 用户取消分享后执行的回调函数
+    }
+});
     
     // 监听“分享到微博”按钮点击、自定义分享内容及分享结果接口
      wx.onMenuShareWeibo({
@@ -261,15 +277,19 @@ wx.ready(function(){
        // alert(JSON.stringify(res));
       },
       success: function (res) {
-       // alert('已分享');
+        alert('已分享');
       },
       cancel: function (res) {
-       // alert('已取消');
+        alert('已取消');
       },
       fail: function (res) {
-       // alert(JSON.stringify(res));
+        alert(JSON.stringify(res));
       }
     });
+    
+     document.querySelector('#showOptionMenu').onclick = function () {
+    wx.showOptionMenu();
+  };
 });
 </script>
 </head>
@@ -294,7 +314,7 @@ wx.ready(function(){
       </div>
       
       <a class="right" href="javascript:share();">分享</a>
-
+		
 <!-- JiaThis Button BEGIN -->
 <div class="jiathis_style_m" style="display:none;">
 <a class="jiathis_button_qzone"></a>
@@ -329,7 +349,7 @@ var jiathis_config={
 
     <!-- 可用积分 -->
     <section class="available-points">
-      <div class="left">可用积分：<span><#if user??&&user.totalPoints??>${user.totalPoints?c!''}<#else>0</#if></span> </div>
+      <div class="left">可用积分：<span><#if user??&&user.totalPoints??>${user.totalPoints?c!''}<#else>0</#if></span><a id="onMenuShareTimeline" href="javascript:void(0)">微信分享</a> </div>
       <#--<div class="right">未使用</div>-->
             <a id="collect_add" href="javascript:collectAdd(${tdGoods.id?c});" style="float: right;
                                                       display:<#if !collected??||collected?? && collected ==0>block<#else>none</#if>;
@@ -366,6 +386,7 @@ var jiathis_config={
         <p id="weixin" class="img1 img2">
           <img src="/client/images//iconfont-weixinzhifu.png" alt="微信支付">
         </p>
+        <a href="javascript:void(0)" id="showOptionMenu">显示菜单</a>
       </div>
       <div class="div1">
         销量：<span><#if tdGoods.soldNumber??>${tdGoods.soldNumber?c}<#else>0</#if></span>

@@ -30,6 +30,14 @@
 				}
 			});
 		</#if>
+		<#if WX??>
+			$(document).ready(function(){
+				if(confirm("欢迎使用微信登陆循伍道，要现在绑定手机吗？"))
+				{
+					location.href="/user/change/mobile";
+				}
+			});
+		</#if>
 </script>		
 </head>
 <body>
