@@ -42,9 +42,10 @@
 			            }
 					}
 					else{
-						$.dialog.alert(data.msg)
+						$.dialog.alert(data.msg,
+						function(){location.href='/Verwalter/user/apply/list?statusId=${apply.statusId!''}'})
 						
-						setTimeout("location.href='/Verwalter/user/apply/list?statusId=${apply.statusId!''}'",2000);
+						//setTimeout("location.href='/Verwalter/user/apply/list?statusId=${apply.statusId!''}'",2000);
 						
 					}
 			      }

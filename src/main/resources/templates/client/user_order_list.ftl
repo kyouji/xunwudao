@@ -178,7 +178,6 @@ function pay(orderMoney,orderNumber){
 	if(ua.match(/MicroMessenger/i)=="micromessenger") 
 	{
 		if(orderMoney > 0){
-			alert("开始微信支付！");
 			location.href='/weixin/pay?orderNumber='+orderNumber;
 		}else{
 			location.href='/user/pay/free?money=0.00&orderNumber='+orderNumber;
@@ -194,36 +193,29 @@ function pay(orderMoney,orderNumber){
 	}
 }
 
-//微信支付回调
-
-function onBridgeReady(){
-    var data = {
-            "appId": "${appId!''}", //公众号名称，由商户传入
-            "timeStamp": "${timeStamp!''}", //时间戳
-            "nonceStr": "${nonceStr!''}", //随机串
-            "package": "${package!''}",//扩展包
-            "signType": "MD5", //微信签名算法：MD5
-            "paySign": "${paySign!''}" //微信签名
-        };
-   WeixinJSBridge.invoke(
-       'getBrandWCPayRequest', data,
-       function(res){
-           if(res.err_msg == "get_brand_wcpay_request:ok" ) {
-            alert("支付成功");
-            location.reload();
-             // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
-           }
-           else if (res.err_msg == "get_brand_wcpay_request:cancel")
-           {
-               alert("取消支付！");
-               window.location.href="/user/center";
-           }
-           else{
-               alert("支付失败！");
-               window.location.href="/user/center";
-           }
-       }
-   );
+function finishServ(orderNumber,state){
+	var orderNumber = orderNumber;
+	var state = state;
+	$.ajax({
+	      type:"post",
+	      url:"/order/confirm",
+	      data:{"orderNumber":orderNumber,
+	      		   "state":state},
+	      success:function(data){
+			if (data.code == 1)
+			{
+	            alert(data.msg);
+	            if(data.login==1)
+	            {
+	            	location.href='/login';
+	            }
+			}
+			else{
+				alert(data.msg)
+				location.href='/user/order/list';
+			}
+	      }
+	  });
 }
 </script>
 </head>
@@ -239,7 +231,7 @@ function onBridgeReady(){
   <!-- 我的订单 -->
   <article class="my-orders">
     <ul id="tab-ul-2">
-      <li class="active"><a href="javascript:void(0)">待付款<#--<span></span>--></a></li>
+      <li><a href="javascript:void(0)">待付款</a></li>
       <li><a href="javascript:void(0)">待服务</a></li>
       <li><a href="javascript:void(0)">已完成</a></li>
     </ul>
@@ -283,10 +275,12 @@ function onBridgeReady(){
 			          	<#--
 			            <a href="<#if totalPrice?? && totalPrice gt 0>/user/pay/alipay/recharge?money=${totalPrice?string("0.00")}&orderNumber=${order.orderNumber!''}<#else>/user/pay/free?money=0.00&orderNumber=${order.orderNumber!''}</#if>">确认付款</a>
 			            -->
+			            <div class="div1">下单时间&nbsp;&nbsp;<span>${order.orderTime?string("yyyy-MM-dd HH:mm:ss")}</span></div>
 			            <a href="javascript:pay('${totalPrice?string("0.00")}','${order.orderNumber!''}');">去付款</a>
 			            <a href="/order/cancel?orderNumber=${order.orderNumber!''}&state=${order.statusId!''}">取消订单</a>
 			          </section>
 			        </article>
+			        <HR style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="100%" color=#B6B1C3 SIZE=3>
 		        </#if>
 		    </#list>
 		</#if>        
@@ -327,7 +321,7 @@ function onBridgeReady(){
                           </section>
                       <section class="sec3">包含所有套餐共<span>${totalQuantity?c}</span>份，合计：￥<span>${totalPrice?string("0.00")}</span></section>
                       <section class="sec4">
-                        <a href="/order/confirm?orderNumber=${order.orderNumber!''}&state=${order.statusId!''}">确认服务</a>
+                        <a href="javascript:finishServ('${order.orderNumber!''}','${order.statusId!''}')";>确认服务</a>
                       </section>
                     </article>
                 </#if>

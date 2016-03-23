@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -117,26 +118,33 @@ public class TdOrderController extends AbstractPaytypeController {
     }
     
     //确认服务 已体检
-    @RequestMapping(value = "/confirm")
-    public String orderconfirm(String orderNumber, Long state,HttpServletRequest req)
+    @RequestMapping(value = "/confirm" , method=RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> orderconfirm(String orderNumber, Long state,HttpServletRequest req)
     {
+    	Map<String, Object> res = new HashMap<String, Object>();
+		res.put("code", 1);
     	String username = (String) req.getSession().getAttribute("username");
     	
-    	if (username == null)
-    	{
-    		return "redirect:/login";
-		}
+    	if(null == username)
+        {
+        	res.put("msg", "请先登录！");
+        	res.put("login",1);
+        	return res;
+        }
     	TdOrder tdOrder = tdOrderService.findByOrderNumber(orderNumber);
 		if (null == tdOrder || !tdOrder.getStatusId().equals(4L))
 		{
-			return "redirect:/user/order/list/" + state; 
+			res.put("msg", "订单状态有误或不存在！");
+        	return res;
 		}
 		
 		tdOrder.setStatusId(6L);
 		tdOrderService.save(tdOrder);
     	
-    	
-    	return "redirect:/user/order/list/6";
+    	res.put("msg", "确认成功");
+	    res.put("code", 0);
+        return res;
     }
     
     //我的收藏 买买买

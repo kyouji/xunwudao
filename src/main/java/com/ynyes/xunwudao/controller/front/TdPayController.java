@@ -222,8 +222,8 @@ public class TdPayController {
 						user.setSpend(spend+tdOrder.getTotalPrice());
 						tdUserService.save(user);
 						
-						Long pOne = (long)(tdOrder.getTotalPrice()*100* tdSettingService.findTopBy().getRegisterSuccessPoints()); //第一层应得积分 
-						Long pTwo = (long)(tdOrder.getTotalGoodsPrice()*100* tdSettingService.findTopBy().getRegisterSharePoints()); //第二层应得积分 
+						Long pOne = (long)(tdOrder.getTotalPrice()*100* tdSettingService.findTopBy().getRegisterSuccessPoints()/100); //第一层应得积分 
+						Long pTwo = (long)(tdOrder.getTotalGoodsPrice()*100* tdSettingService.findTopBy().getRegisterSharePoints()/100); //第二层应得积分 
 						System.out.println("pOne:"+pOne);
 						System.out.println("pTwo:"+pTwo);
 						//上一级推荐人

@@ -46,7 +46,7 @@
     <ul class="menu">
       <li><a href="/user/info">个人信息</a></li>
       <li><a href="/user/point">会员积分</a></li>
-      <li><a href="/user/order/list/2">我的订单</a></li>
+      <li><a href="/user/order/list">我的订单</a></li>
       <li><a href="/user/rf">我的分享</a></li>
       <li><a href="/user/collect">我的收藏</a></li>
     </ul>

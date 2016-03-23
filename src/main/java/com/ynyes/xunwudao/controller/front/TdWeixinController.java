@@ -461,16 +461,19 @@ public class TdWeixinController {
 						System.out.println("------------0321、tdOrder statusId！"+tdOrder.getStatusId());
 						tdOrder.setStatusId(4L);
 						tdOrder.setPayTime(new Date());
+						tdOrder.setPayTypeTitle("微信支付");
 						if(null != tdOrder.getOrderGoodsList()){
 							System.out.println("------------0321、orderGoodsList 不为空！！");
 							for(TdOrderGoods item : tdOrder.getOrderGoodsList()){
+								System.out.println("------------0321、开始循环orderGoodsList！！");
 								item.setTime(new Date());
 								item.setUsername(tdOrder.getUsername());
 								tdOrderGoodsService.save(item);
 							}
 						}
+						System.out.println("------------0321、保存tdOrder！！");
 						tdOrderService.save(tdOrder);
-						
+						System.out.println("------------0321、保存完毕！！");
 						//分销处理
 						System.out.println("------------0321、开始分销处理！");
 						System.out.println("------------0321、总价！"+tdOrder.getTotalGoodsPrice());
@@ -483,15 +486,15 @@ public class TdWeixinController {
 								System.out.println("------------0321、用户存在！");
 								//消费总额
 								Double spend = 0.00;
-								System.out.println("------------0321、user。getspend！"+user.getSpend());
+								System.out.println("------------0321、user。getspend："+user.getSpend());
 								if(null != user.getSpend()){
 									spend=user.getSpend();
 								}
 								user.setSpend(spend+tdOrder.getTotalPrice());
 								tdUserService.save(user);
 								
-								Long pOne = (long)(tdOrder.getTotalPrice()*100* tdSettingService.findTopBy().getRegisterSuccessPoints()); //第一层应得积分 
-								Long pTwo = (long)(tdOrder.getTotalGoodsPrice()*100* tdSettingService.findTopBy().getRegisterSharePoints()); //第二层应得积分 
+								Long pOne = (long)(tdOrder.getTotalPrice()*100* tdSettingService.findTopBy().getRegisterSuccessPoints()/100); //第一层应得积分 
+								Long pTwo = (long)(tdOrder.getTotalGoodsPrice()*100* tdSettingService.findTopBy().getRegisterSharePoints()/100); //第二层应得积分 
 								System.out.println("pOne:"+pOne);
 								System.out.println("pTwo:"+pTwo);
 								//上一级推荐人
@@ -509,10 +512,6 @@ public class TdWeixinController {
 							}
 						}
 					}
-					else{
-						System.out.println("订单不存在！！！");
-					}
-					
 				}
 				
 				String content = "<xml>\n"
@@ -902,6 +901,7 @@ public void wx_notifyTEST(String orderNumber,HttpServletResponse response,HttpSe
 					if(null != tdOrder.getOrderGoodsList()){
 						System.out.println("------------0321、orderGoodsList 不为空！！");
 						for(TdOrderGoods item : tdOrder.getOrderGoodsList()){
+							System.out.println("------------0321、循环goods！！");
 							item.setTime(new Date());
 							item.setUsername(tdOrder.getUsername());
 							tdOrderGoodsService.save(item);

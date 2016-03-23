@@ -649,6 +649,7 @@ public class TdLoginController extends HttpServlet {
 						newUser.setQqOpenid(qqOpenid);
 						newUser.setRegisterTime(new Date());
 						newUser.setStatusId(1L);
+						newUser.setTotalPoints(0L);
 						newUser.setHeadImageUrl(userinfo.get("figureurl_qq_1"));
 						newUser.setPassword("123456"); //password不能为空
 						newUser.setUsername(qqOpenid);

@@ -55,7 +55,7 @@ public class TdRegController {
 	private TdGoodsService tdGoodsService;
 	
 	@RequestMapping("/reg")
-	public String reg(/* Integer shareId, */String name, String code,   HttpServletRequest request,
+	public String reg(/* Integer shareId, */String name, String rfCode, String code,   HttpServletRequest request,
 			ModelMap map) {
 		String username = (String) request.getSession().getAttribute("username");
 
@@ -68,6 +68,9 @@ public class TdRegController {
 		if (null == username) {
 			
 			map.addAttribute("username", name);
+			if(null != rfCode){
+				map.addAttribute("rfCode", rfCode);
+			}
 
 			return "/client/reg";
 		
@@ -323,6 +326,7 @@ public class TdRegController {
 		user.setUsername(mobile);
 		user.setMobile(mobile);
 		user.setStatusId(1L);
+		user.setTotalPoints(0L);
 		user.setRegisterTime(new Date());
 		user.setIsDeal(0L);
 		user.setLastLoginTime(new Date());

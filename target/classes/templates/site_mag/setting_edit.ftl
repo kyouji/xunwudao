@@ -105,7 +105,7 @@ $(function () {
             <ul>
                 <li><a href="javascript:;" onclick="tabs(this);" class="selected">网站基本信息</a></li>
                 <#--<li><a href="javascript:;" onclick="tabs(this);">功能权限设置</a></li>-->
-                <li><a href="javascript:;" onclick="tabs(this);">网站奖励设置</a></li>
+                <li><a href="javascript:;" onclick="tabs(this);">分销奖励设置</a></li>
                 <li><a href="javascript:;" onclick="tabs(this);">注册用户协议</a></li>
             </ul>
         </div>

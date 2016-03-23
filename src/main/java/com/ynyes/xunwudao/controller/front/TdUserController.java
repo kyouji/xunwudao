@@ -609,8 +609,8 @@ public class TdUserController {
 	}
 	
 	//订单列表
-	@RequestMapping(value = "/user/order/list/{statusId}")
-    public String orderList(@PathVariable Integer statusId, Integer page,
+	@RequestMapping(value = "/user/order/list")
+    public String orderList(Integer page,
             String keywords, Integer timeId, HttpServletRequest req,
             ModelMap map) {
         String username = (String) req.getSession().getAttribute("username");
@@ -629,14 +629,10 @@ public class TdUserController {
             timeId = 0;
         }
 
-        if (null == statusId) {
-            statusId = 0;
-        }
 
         TdUser tdUser = tdUserService.findByUsernameAndIsEnabled(username);
 
         map.addAttribute("user", tdUser);
-        map.addAttribute("status_id", statusId);
         map.addAttribute("time_id", timeId);
     	List<TdOrder> orderList = tdOrderService.findByUserIdOrderByOrderTimeDesc(tdUser.getId());
     	map.addAttribute("order_list", orderList);

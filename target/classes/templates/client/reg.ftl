@@ -167,7 +167,7 @@ function tip()
         <!-- 获取验证码 -->
         <a class="get-code" id="smsCodeBtn" href="javascript:void(0)">获取短信验证码</a>
         <input class="password" id="txt_regMcode" type="tel" placeholder="请输入收到的短信验证码">
-        <input class="password" id="txt_regRfcode" type="tel" placeholder="若有推荐人请输入推荐码">
+        <input class="password" id="txt_regRfcode" type="tel" placeholder="若有推荐人请输入推荐码" value="<#if rfCode??&&rfCode?length gt 0>${rfCode}</#if>">
         <input class="password" id="txt_regPassword" type="password" placeholder="请输入6-16位登陆密码">
 
         <!-- 服务协议 -->

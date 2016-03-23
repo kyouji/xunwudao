@@ -49,7 +49,7 @@ function hideShow()
 	    <#if goods_list??>
 	    	<#list goods_list as item>
 	    		<#if item_index lt 6>
-			      <a class="list" href="/goods/detail/${item.id?c}">
+			      <a class="list" href="/goods/detail?id=${item.id?c}">
 			        <!-- 所有套餐图片尺寸必须一致，否则页面布局会乱 -->
 			        <img src="<#if item.coverImageUri?? && item.coverImageUri?length gt 0>${item.coverImageUri}<#else>/client/images/pic_product_1.jpg</#if>" width=100% height=120px  alt="套餐图片">
 			        <div class="div1">
@@ -60,7 +60,7 @@ function hideShow()
 			      </a>
 		      	</#if>
 		      	<#if item_index gt 5>
-			      	  <a class="list show-more" style="display:none;" href="/goods/detail/${item.id?c}">
+			      	  <a class="list show-more" style="display:none;" href="/goods/detail?id=${item.id?c}">
 				        <!-- 所有套餐图片尺寸必须一致，否则页面布局会乱 -->
 				        <img src="<#if item.imgUrl?? && item.imgUrl?length gt 0>${item.imgUrl}<#else>/client/images/pic_product_1.jpg</#if>" alt="套餐图片">
 				        <div class="div1">

@@ -7,7 +7,7 @@
 <meta name="copyright" content="" />
 <meta name="description" content="">
 <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
-<title>循伍道</title>
+<title>循伍道-微信支付</title>
 <!-- css -->
 <link rel="stylesheet" type="text/css" href="/client/css/common.css"/>
 <link rel="stylesheet" type="text/css" href="/client/css/main.css"/>
@@ -159,43 +159,6 @@
   });
 </script>
 <script>
-function showMore()
-{
-    
-    $(".show-more").slideDown();
-    $(".look-more").attr("href","javascript:hideShow();");
-    $(".look-more").html("收起");
-}
-
-function hideShow()
-{
-    $(".show-more").slideUp();
-    $(".look-more").attr("href","javascript:showMore();");
-    $(".look-more").html("查看更多");
-}
-
-//支付
-function pay(orderMoney,orderNumber){
-	var ua = navigator.userAgent.toLowerCase();
-	
-	if(ua.match(/MicroMessenger/i)=="micromessenger") 
-	{
-		if(orderMoney > 0){
-			alert("开始微信支付！");
-			location.href='/weixin/paytest?orderNumber='+orderNumber;
-		}else{
-			location.href='/user/pay/free?money=0.00&orderNumber='+orderNumber;
-		}
-	}
-	else
-	{
-		if(orderMoney > 0){
-			location.href='/user/pay/alipay/recharge?money='+orderMoney+'&orderNumber='+orderNumber;
-		}else{
-			location.href='/user/pay/free?money=0.00&orderNumber='+orderNumber;
-		}		
-	}
-}
 
 //微信支付回调
 
@@ -213,7 +176,8 @@ function onBridgeReady(){
        function(res){
            if(res.err_msg == "get_brand_wcpay_request:ok" ) {
             alert("支付成功");
-            location.reload();
+            $("#pay_before").css("display","none");
+             $("#pay_before").css("display","block");
              // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
            }
            else if (res.err_msg == "get_brand_wcpay_request:cancel")
@@ -227,6 +191,31 @@ function onBridgeReady(){
            }
        }
    );
+}
+
+function finishServ(orderNumber,state){
+	var orderNumber = orderNumber;
+	var state = state;
+	$.ajax({
+	      type:"post",
+	      url:"/order/confirm",
+	      data:{"orderNumber":orderNumber,
+	      		   "state":state},
+	      success:function(data){
+			if (data.code == 1)
+			{
+	            alert(data.msg);
+	            if(data.login==1)
+	            {
+	            	location.href='/login';
+	            }
+			}
+			else{
+				alert(data.msg)
+				location.href='/user/order/list/6';
+			}
+	      }
+	  });
 }
 </script>
 </head>
@@ -278,13 +267,13 @@ function onBridgeReady(){
 				         	</#if> 
 				          </section>
 			          <section class="sec3">包含所有套餐共<span>${totalQuantity?c}</span>份，合计：￥<span>${totalPrice?string("0.00")}</span></section>
-			          <section class="sec4">
-			          	<#--
-			            <a href="<#if totalPrice?? && totalPrice gt 0>/user/pay/alipay/recharge?money=${totalPrice?string("0.00")}&orderNumber=${order.orderNumber!''}<#else>/user/pay/free?money=0.00&orderNumber=${order.orderNumber!''}</#if>">确认付款</a>
-			            -->
+			          <section <#if paySign??&&paySign?length gt 0>style="display:none;"</#if> id="pay_before"  class="sec4">
 			            <a href="javascript:onBridgeReady();">确认付款</a>
 			            <a href="/order/cancel?orderNumber=${order.orderNumber!''}&state=${order.statusId!''}">取消订单</a>
 			          </section>
+			          <section <#if paySign??&&paySign?length gt 0><#else>style="display:none;"</#if> id="pay_after" class="sec4">
+                        <a href="/order/confirm?orderNumber=${order.orderNumber!''}&state=${order.statusId!''}">确认服务</a>
+                      </section>
 			        </article>
 	</#if>      
       </li>

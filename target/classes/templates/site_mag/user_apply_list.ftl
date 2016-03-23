@@ -111,7 +111,7 @@ var theForm = document.forms['form1'];
                 
                 </td>
                 <td align="center">
-                    <a href="/Verwalter/user/apply/edit?id=${item.id}">修改</a> 
+                    <a href="/Verwalter/user/apply/edit?id=${item.id}">详细</a> 
                     <#--<a href="/Verwalter/user/edit?id=${user.id}&roleId=${roleId!""}&action=view">查看</a></td>-->
                     <#--<a href="/Verwalter/user/role?id=${user.id}">进入</a></td>-->
                     </td>
