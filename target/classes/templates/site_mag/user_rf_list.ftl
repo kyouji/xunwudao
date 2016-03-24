@@ -65,6 +65,7 @@ function __doPostBack(eventTarget, eventArgument) {
         <th align="left">用户名</th>
         <th align="left" width="12%">编号</th>
         <th align="left" width="20%">积分</th>
+        <th align="left" width="20%">消费</th>
         <th width="20%">操作</th>
     </tr>
     
@@ -75,6 +76,7 @@ function __doPostBack(eventTarget, eventArgument) {
         </td>
         <td>${user.number!""}</td>
         <td><#if user.totalPoints??>${user.totalPoints?c!""}<#else>0</#if></td>
+        <td><#if user.spend??>${user.spend?string("0.00")}<#else>0.00</#if></td>
         <td align="center">
             <a href="/Verwalter/user/rf/edit?id=${user.id?c!""}">修改</a>
         </td>
@@ -90,6 +92,7 @@ function __doPostBack(eventTarget, eventArgument) {
             </td>
             <td>${item.number!""}</td>
             <td><#if item.totalPoints??>${item.totalPoints?c!""}<#else>0</#if></td>
+            <td><#if item.spend??>${item.spend?string("0.00")}<#else>0.00</#if></td>
             <td align="center">
                 <a href="/Verwalter/user/rf/edit?id=${item.id?c!""}">修改</a>
             </td>
@@ -106,6 +109,7 @@ function __doPostBack(eventTarget, eventArgument) {
 			            </td>
 			            <td>${two.number!""}</td>
 			            <td><#if item.totalPoints??>${two.totalPoints?c!""}<#else>0</#if></td>
+			            <td><#if two.spend??>${two.spend?string("0.00")}<#else>0.00</#if></td>
 			            <td align="center">
 			                <a href="/Verwalter/user/rf/edit?id=${two.id?c!""}">修改</a>
 			            </td>

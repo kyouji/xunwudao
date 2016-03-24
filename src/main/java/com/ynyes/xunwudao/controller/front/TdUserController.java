@@ -2,13 +2,18 @@ package com.ynyes.xunwudao.controller.front;
 
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,12 +29,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tencent.common.Configure;
 import com.ynyes.xunwudao.entity.TdOrder;
+import com.ynyes.xunwudao.entity.TdAccessToken;
 import com.ynyes.xunwudao.entity.TdApply;
 import com.ynyes.xunwudao.entity.TdApplyType;
 import com.ynyes.xunwudao.entity.TdArea;
 import com.ynyes.xunwudao.entity.TdDemand;
 import com.ynyes.xunwudao.entity.TdGoods;
 import com.ynyes.xunwudao.entity.TdUser;
+import com.ynyes.xunwudao.service.TdAccessTokenService;
 import com.ynyes.xunwudao.service.TdApplyService;
 import com.ynyes.xunwudao.service.TdApplyTypeService;
 import com.ynyes.xunwudao.service.TdAreaService;
@@ -77,6 +84,9 @@ public class TdUserController {
 	
 	@Autowired
 	private TdGoodsService tdGoodsService;
+	
+	@Autowired
+	private TdAccessTokenService tdAccessTokenService;
 
 	@RequestMapping(value = "/user/center")
 	public String user(String code, Long QQ, Long WX,HttpServletRequest req, ModelMap map) {
@@ -141,10 +151,11 @@ public class TdUserController {
 			Map<String, String> res = weixin.getWebAccessToken(code);
 			String openid = res.get("openid");
 			String access_token = res.get("access_token");
-			System.out.println("---------0318-----------openid:"+openid);
-			System.out.println("---------0318-----------access_token:"+access_token);
-			if(null != openid){
-				TdUser tdUser = tdUserService.findByOpenid(openid);
+			//统一用unionid
+			String unionid = res.get("unionid");
+			System.out.println("---------0324-----------res:"+res);
+			if(null != unionid && null != openid){
+				TdUser tdUser = tdUserService.findByUnionid(unionid);
 				if(null == tdUser){
 					
 					Map<String, Object> userInfo = weixin.getWeixinInfo(access_token, openid);
@@ -164,7 +175,7 @@ public class TdUserController {
 					newUser.setRegisterTime(new Date());
 					newUser.setLastLoginTime(new Date());
 					newUser.setOpenid(openid);
-					newUser.setUnionid(userInfo.get("unionid").toString());
+					newUser.setUnionid(unionid);
 					tdUserService.save(newUser);
 					
 					Long id = newUser.getId();
@@ -436,7 +447,7 @@ public class TdUserController {
 	
 	//用户积分 zhangji
 	@RequestMapping(value = "/user/point")
-	public String userPoint(HttpServletRequest req, ModelMap map) {
+	public String userPoint(HttpServletRequest req, ModelMap map) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		String username = (String) req.getSession().getAttribute("username");
 		if (null == username) {
 			return "redirect:/login";
@@ -451,15 +462,254 @@ public class TdUserController {
     	String userNumber = tdUser.getNumber();
     	Random random = new Random();
 		String randomNumber = random.nextInt(900) + 100 + "";
-		
 		String rfCode = userNumber + randomNumber.toString() ;
 		map.addAttribute("rfCode", rfCode);
+		
+		//微信自定义分享
+  		//通过 access_token 获取微信 jsapi_ticket
+		String jsapi_ticket = checkjsapiTicket();
+		map.addAttribute("jsapi_ticket", jsapi_ticket);
+		System.out.println("\n-----------jsapi_ticket:"+jsapi_ticket);
+		// 获取是时间戳
+		String timestamp =Long.toString(System.currentTimeMillis() / 1000);
+		map.addAttribute("timestamp", timestamp);
+		System.out.println("timestamp--------------"+timestamp);
+		// 随机字符串
+		String noncestr = UUID.randomUUID().toString();
+		map.addAttribute("noncestr", noncestr);
+		System.out.println("noncestr--------------"+noncestr);
+		// 生成签名
+		String tempStr = "jsapi_ticket=" + jsapi_ticket + "&noncestr=" + noncestr +"&timestamp=" 
+						+ timestamp + "&url=http://www.xwd33.com/user/point";
+						
+		
+		System.out.println("\n-----------tempStr:"+tempStr);
+		// sha1加密
+		String signature = "";
+		MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+		crypt.reset();
+        crypt.update(tempStr.getBytes("UTF-8"));
+        signature = byteToHex(crypt.digest());
+		
+
+        System.out.println("signature--------------"+signature);
+	    map.addAttribute("signature", signature);
+		
 		
 		map.addAttribute("user", tdUser);
 		map.addAttribute("showIcon", 4);
 		 
 		return "/client/user_point";
 	}
+	
+	 /**
+     * @author lc
+     * @注释：判断jsapi_ticket是否过期并返回最新jsapi_ticket
+     */
+    public String checkjsapiTicket(){
+    	//List<TdAccessToken> tdAccessTokenlist = tdAccessTokenService.findAll();
+    	TdAccessToken tdAccessToken = tdAccessTokenService.findTopBy();
+    	if (null == tdAccessToken) {
+    		tdAccessToken = new TdAccessToken();
+    		String accessToken = getAccess_token();
+    		while (null == accessToken) {
+    			accessToken = getAccess_token();
+    		}
+    		tdAccessToken.setAccess_token(accessToken);
+    		tdAccessToken.setAccess_expires_in("7000");
+    		tdAccessToken.setAccess_updateTime(new Date());
+    		
+    		String jsapi_ticket = getTicket(accessToken);
+    		while (null == jsapi_ticket) {
+    			jsapi_ticket = getTicket(accessToken);
+    		}
+    		tdAccessToken.setJsapi_ticket(jsapi_ticket);
+    		tdAccessToken.setJsapi_ticket_expires_in("7000");
+    		tdAccessToken.setJsapi_ticket_updateTime(new Date());
+    		tdAccessTokenService.save(tdAccessToken);
+    		return jsapi_ticket;
+    	}else {
+    		if (null == tdAccessToken.getJsapi_ticket()) {
+    			String accessToken = checkAccessToken();
+    			String jsapi_ticket = getTicket(accessToken);
+    			while (null == jsapi_ticket) {
+    				jsapi_ticket = getTicket(accessToken);
+    			}
+    			tdAccessToken.setJsapi_ticket(jsapi_ticket);
+    			tdAccessToken.setJsapi_ticket_expires_in("7000");
+    			tdAccessToken.setJsapi_ticket_updateTime(new Date());
+    			tdAccessTokenService.save(tdAccessToken);
+    			
+    			return jsapi_ticket;
+    		}else {	
+    			Date now = new Date();// new Date()为获取当前系统时间
+    			if ((tdAccessToken.getJsapi_ticket_updateTime().getTime() + Long.parseLong(tdAccessToken.getJsapi_ticket_expires_in()+"000")) < now.getTime() ) {
+    				String accessToken = checkAccessToken();
+    				String jsapi_ticket = getTicket(accessToken);
+    				while (null == jsapi_ticket) {
+    					jsapi_ticket = getTicket(accessToken);
+    				}
+    				tdAccessToken.setJsapi_ticket(jsapi_ticket);
+    				tdAccessToken.setJsapi_ticket_updateTime(new Date());
+    				tdAccessTokenService.save(tdAccessToken);
+    				return jsapi_ticket;
+    			}else {
+    				return tdAccessToken.getJsapi_ticket();
+    			}
+    		}
+    	}		
+    }
+    
+    /**
+     * @author lc
+     * @注释：通过 access_toked 获取微信 jsapi_ticket
+     */
+    public String getTicket(String accessToken){
+
+    	String url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token="+ accessToken +"&type=jsapi";
+    	String jsapi_ticket = null;
+    	try {  
+    		  
+            URL urlGet = new URL(url);  
+
+            HttpURLConnection http = (HttpURLConnection) urlGet.openConnection();  
+
+            http.setRequestMethod("GET"); // 必须是get方式请求  
+
+            http.setRequestProperty("Content-Type",  
+
+                    "application/x-www-form-urlencoded");  
+
+            http.setDoOutput(true);  
+
+            http.setDoInput(true);  
+
+            http.connect();  
+
+            InputStream is = http.getInputStream();  
+
+            int size = is.available();  
+
+            byte[] jsonBytes = new byte[size];  
+
+            is.read(jsonBytes);  
+
+            String message = new String(jsonBytes, "UTF-8");  
+
+            JSONObject demoJson = JSONObject.fromObject(message);  
+            System.out.println("\n get ticket返回值："+demoJson);
+           // accessToken = demoJson.getString("access_token");  
+            jsapi_ticket = demoJson.getString("ticket");  
+
+            System.out.println("jsapi_ticket===="+jsapi_ticket);    
+
+           // System.out.println("====================获取token结束==============================");  
+
+            is.close();  
+
+        } catch (Exception e) {  
+
+            e.printStackTrace(); 
+        } 
+
+    	return jsapi_ticket;
+    }
+    
+    public String getAccess_token(){
+    	String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="  
+    			  
+                   + Configure.getAppid()+ "&secret=" + Configure.getSecret();
+    	String accessToken = null;
+    	String expiresIn = null;
+    	try {  
+    		  
+            URL urlGet = new URL(url);  
+
+            HttpURLConnection http = (HttpURLConnection) urlGet.openConnection();  
+
+            http.setRequestMethod("GET"); // 必须是get方式请求  
+
+            http.setRequestProperty("Content-Type",  
+
+                    "application/x-www-form-urlencoded");  
+
+            http.setDoOutput(true);  
+
+            http.setDoInput(true);  
+
+            http.connect();  
+
+            InputStream is = http.getInputStream();  
+
+            int size = is.available();  
+
+            byte[] jsonBytes = new byte[size];  
+
+            is.read(jsonBytes);  
+
+            String message = new String(jsonBytes, "UTF-8");  
+
+            JSONObject demoJson = JSONObject.fromObject(message);  
+            System.out.println("--------------------DEMO-----------"+demoJson);
+            accessToken = demoJson.getString("access_token");  
+            expiresIn = demoJson.getString("expires_in");  
+
+            System.out.println("accessToken===="+accessToken);  
+//            System.out.println("expiresIn==="+expiresIn);  
+
+           // System.out.println("====================获取token结束==============================");  
+
+            is.close();  
+
+        } catch (Exception e) {  
+
+            e.printStackTrace(); 
+        }  
+    	return accessToken;
+    }
+    /**
+     * @author lc
+     * @注释： 判断access_token是否过期并返回最新access_token
+     */
+    public String checkAccessToken(){
+    	//List<TdAccessToken> tdAccessTokenlist = tdAccessTokenService.findAll();
+    	TdAccessToken tdAccessToken = tdAccessTokenService.findTopBy();
+    	if (null == tdAccessToken) {
+    		tdAccessToken = new TdAccessToken();
+    		String accessToken = getAccess_token();
+    		while (null == accessToken) {
+    			accessToken = getAccess_token();
+    		}
+    		tdAccessToken.setAccess_token(accessToken);
+    		tdAccessToken.setAccess_expires_in("7000");
+    		tdAccessToken.setAccess_updateTime(new Date());
+    		tdAccessTokenService.save(tdAccessToken);
+    		
+    		return accessToken;
+    	}else {	
+    		Date now = new Date();// new Date()为获取当前系统时间
+    		if ((tdAccessToken.getAccess_updateTime().getTime() + Long.parseLong(tdAccessToken.getAccess_expires_in()+"000")) < now.getTime() ) {
+    			String accessToken = getAccess_token();
+    			tdAccessToken.setAccess_token(accessToken);
+    			tdAccessToken.setAccess_updateTime(new Date());
+    			tdAccessTokenService.save(tdAccessToken);
+    			return accessToken;
+    		}else {
+    			return tdAccessToken.getAccess_token();
+    		}
+    	}
+    }
+    
+    private static String byteToHex(final byte[] hash) {
+        Formatter formatter = new Formatter();
+        for (byte b : hash)
+        {
+            formatter.format("%02x", b);
+        }
+        String result = formatter.toString();
+        formatter.close();
+        return result;
+    }
 	
 	public boolean isMobileNO(String mobiles) {
 		Pattern p = Pattern.compile("^(0|86|17951|[0-9]{3})?([0-9]{8})|((13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8})$");

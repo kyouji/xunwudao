@@ -67,6 +67,11 @@ public class TdManagerIndexController {
         TdManagerRole tdManagerRole = null;
         
         map.addAttribute("newApply", tdApplyService.findByStatusId(0L).size());
+        //支付订单数量查询
+        List<TdOrder> tdOrderspayleft = tdOrderService.findByStatusIdAndShopId(4L,0L);
+        if ( null != tdOrderspayleft) {
+			map.addAttribute("ordernumberpay", tdOrderspayleft.size());
+		}
         
         if (null != tdManager.getRoleId())
         {
@@ -282,7 +287,7 @@ public class TdManagerIndexController {
 //		} 
         
         //支付订单数量查询
-        List<TdOrder> tdOrderspayleft = tdOrderService.findByStatusId(4L);
+        List<TdOrder> tdOrderspayleft = tdOrderService.findByStatusIdAndShopId(4L,0L);
         if ( null != tdOrderspayleft) {
 			res.put("ordernumberpay", tdOrderspayleft.size());
 		}else{

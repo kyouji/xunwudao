@@ -87,13 +87,13 @@ function weixin(){
                               id:"login_container", 
                               appid: "${appId!''}", 
                               scope: "snsapi_login", 
-                              redirect_uri: "http://www.xwd33.com",
+                              redirect_uri: "http://www.xwd33.com?rfCode=${rfCode!''}",
                               state: "state",
                               style: "",
                               href: ""
                             });
                             
-        location.href='https://open.weixin.qq.com/connect/qrconnect?appid=${appId!''}&redirect_uri=http%3A%2F%2Fwww.xwd33.com&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect'                    
+        location.href='https://open.weixin.qq.com/connect/qrconnect?appid=${appId!''}&redirect_uri=http%3A%2F%2Fwww.xwd33.com?rfCode=${rfCode!''}&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect'                    
 	}
 }
 </script>

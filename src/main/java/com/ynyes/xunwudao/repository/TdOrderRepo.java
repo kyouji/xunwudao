@@ -117,6 +117,8 @@ public interface TdOrderRepo extends
      * @author libiao
      */
     List<TdOrder> findByStatusId(Long statusId);
+    
+    List<TdOrder> findByStatusIdAndShopId(Long statusId, Long shopId);
 //    List<TdOrder> findAll();
     /**
      * 按订单号查询

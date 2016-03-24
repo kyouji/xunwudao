@@ -201,6 +201,14 @@ public class TdWeixinController {
 	/*--------------------------------------------------------
 	 * -------------------    支付///////        -------------------
 	 -------------------------------------------------------*/
+	
+	//微信 获取openid
+	@RequestMapping(value = "/weixin/pay/getOpen")
+	public String weixinPayGetOpen(Long orderNumber, HttpServletRequest req, ModelMap map) throws UnsupportedEncodingException{
+			return "redirect:https://open.weixin.qq.com/connect/oauth2/authorize?appid="+Configure.getAppid()+ 
+					 "&redirect_uri=http://www.xwd33.com/weixin/pay?orderNumber="+orderNumber+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
+	}
+	
 	 /**
      * 支付
      * 

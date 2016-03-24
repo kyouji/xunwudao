@@ -29,6 +29,10 @@ public class TdUserCollect {
 	@Column
 	private String username;
 	
+	//用户id
+	@Column
+	private Long userId;
+	
 	// 商品Id
 	@Column
 	private Long goodsId;
@@ -165,6 +169,14 @@ public class TdUserCollect {
 
 	public void setCookId(Long cookId) {
 		this.cookId = cookId;
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
     
 }

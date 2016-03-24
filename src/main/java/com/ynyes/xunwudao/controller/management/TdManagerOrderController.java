@@ -52,6 +52,7 @@ import com.ynyes.xunwudao.service.TdManagerService;
 import com.ynyes.xunwudao.service.TdOrderService;
 import com.ynyes.xunwudao.service.TdPayTypeService;
 import com.ynyes.xunwudao.service.TdProductCategoryService;
+import com.ynyes.xunwudao.service.TdSettingService;
 import com.ynyes.xunwudao.service.TdUserPointService;
 import com.ynyes.xunwudao.service.TdUserService;
 import com.ynyes.xunwudao.util.ClientConstant;
@@ -98,6 +99,9 @@ public class TdManagerOrderController {
     
     @Autowired
     TdAreaService tdAreaService;
+    
+    @Autowired
+    TdSettingService tdSettingService;
     
     // 订单设置
     @RequestMapping(value="/setting/{type}/list")
@@ -589,6 +593,14 @@ public class TdManagerOrderController {
     					}
     					else {
 	    					List<TdOrder> list = tdOrderService.findByStatusOrderByIdDesc(statusId);
+	    					if(statusId == 4){
+	    						for(TdOrder item : list){
+		    						item.setShopId(1L);
+		    						tdOrderService.save(item);
+		    					}
+	    						map.addAttribute("ordernumberpay", 0);
+	    					}
+	    					
 	    					price = countprice(list);
 	                    	sales = countsales(list);
 	    					map.addAttribute("order_page", tdOrderService.findByStatusOrderByIdDesc(statusId, page, size));
@@ -1692,10 +1704,10 @@ public class TdManagerOrderController {
 //                order.setDeliverTypeFee(0.0);
 //            }
             
-            if (null == order.getPayTypeFee())
-            {
-                order.setPayTypeFee(0.0);
-            }
+//            if (null == order.getPayTypeFee())
+//            {
+//                order.setPayTypeFee(0.0);
+//            }
             
             // 修改商品总金额
             else if (type.equalsIgnoreCase("editTotalGoodsPrice"))
@@ -1761,7 +1773,7 @@ public class TdManagerOrderController {
     					 * @注释：添加同盟店所获返利
     					 */
                         // 用户
-                        TdUser tdUser = tdUserService.findByUsername(order.getUsername());
+                        TdUser user = tdUserService.findOne(order.getUserId());
                         
                         // 同盟店
 //                        TdDiySite tdShop = null;
@@ -1791,20 +1803,20 @@ public class TdManagerOrderController {
                                 {
                                     TdGoods tdGoods = tdGoodsService.findOne(tog.getGoodsId());
 
-                                    if (null != tdGoods && null != tdGoods.getReturnPoints()) {
-                                        totalPoints += tdGoods.getReturnPoints()* tog.getQuantity();
-
-                                        if (null != tdGoods.getShopReturnRation()) {
-                                            totalCash += tdGoods.getSalePrice()
-                                                    * tdGoods.getShopReturnRation()* tog.getQuantity();
-                                        }
-                                    }
-                                    if (null != tdGoods && null != tdGoods.getPlatformServiceReturnRation()) {
-                                    	platformService += tdGoods.getSalePrice() * tdGoods.getPlatformServiceReturnRation()* tog.getQuantity();
-                					}
-                                    if (null != tdGoods && null != tdGoods.getTrainServiceReturnRation()) {
-                                    	trainService += tdGoods.getOutFactoryPrice() * tdGoods.getTrainServiceReturnRation()* tog.getQuantity(); 
-                					}
+//                                    if (null != tdGoods && null != tdGoods.getReturnPoints()) {
+//                                        totalPoints += tdGoods.getReturnPoints()* tog.getQuantity();
+//
+//                                        if (null != tdGoods.getShopReturnRation()) {
+//                                            totalCash += tdGoods.getSalePrice()
+//                                                    * tdGoods.getShopReturnRation()* tog.getQuantity();
+//                                        }
+//                                    }
+//                                    if (null != tdGoods && null != tdGoods.getPlatformServiceReturnRation()) {
+//                                    	platformService += tdGoods.getSalePrice() * tdGoods.getPlatformServiceReturnRation()* tog.getQuantity();
+//                					}
+//                                    if (null != tdGoods && null != tdGoods.getTrainServiceReturnRation()) {
+//                                    	trainService += tdGoods.getOutFactoryPrice() * tdGoods.getTrainServiceReturnRation()* tog.getQuantity(); 
+//                					}
                                     totalSaleprice += tdGoods.getSalePrice()* tog.getQuantity();
 //                                    totalCostprice += tdGoods.getCostPrice()* tog.getQuantity();
                                 }
@@ -1813,53 +1825,36 @@ public class TdManagerOrderController {
 //                            	shopOrderincome = totalSaleprice - totalCostprice - platformService - totalCash;
 //                			} 
                             
-                            final Long totalPointsDely = totalPoints;
-                            final TdUser tdUserDely = tdUser;
-                            final TdOrder tdOrderDely = order;
-                            // 用户返利
-                            if (null != tdUser) {
-                            	Timer timer = new Timer();  
-                                timer.schedule(new TimerTask() {  
-                                    public void run() {  
-                                       // System.out.println("-------设定要指定任务--------");  
-                                        TdUserPoint userPoint = new TdUserPoint();
-                                        TdOrder tdOrder = tdOrderService.findByOrderNumber(tdOrderDely.getOrderNumber());
-                                        
-                                        userPoint.setDetail("购买商品赠送粮草");
-                                        userPoint.setOrderNumber(tdOrderDely.getOrderNumber());
-                                        userPoint.setPoint(totalPointsDely);
-                                        userPoint.setPointTime(new Date());
-                                        userPoint.setTotalPoint(tdUserDely.getTotalPoints() + totalPointsDely);
-                                        userPoint.setUsername(tdUserDely.getUsername());
-
-                                        userPoint = tdUserPointService.save(userPoint);
-
-                                        tdUserDely.setTotalPoints(userPoint.getTotalPoint());
-                                        
-                                        tdOrder.setIsReturnPoints(true);
-                                        tdOrderService.save(tdOrder);
-                                        tdUserService.save(tdUserDely);
-                                    }  
-                                }, 1000*3600*24*7);// 设定指定的时间time,
-                            	
-                                
-                            }
+        					if(null != user){
+        						
+        						//消费总额
+        						Double spend = 0.00;
+        						if(null != user.getSpend()){
+        							spend=user.getSpend();
+        						}
+        						user.setSpend(spend+order.getTotalPrice());
+        						tdUserService.save(user);
+        						
+        						Long pOne = (long)(order.getTotalPrice()*100* tdSettingService.findTopBy().getRegisterSuccessPoints()/100); //第一层应得积分 
+        						Long pTwo = (long)(order.getTotalGoodsPrice()*100* tdSettingService.findTopBy().getRegisterSharePoints()/100); //第二层应得积分 
+        						System.out.println("pOne:"+pOne);
+        						System.out.println("pTwo:"+pTwo);
+        						//上一级推荐人
+        						TdUser userOne = tdUserService.findOne(user.getUpUserOne());
+        						if(null != userOne){
+        							userOne.setTotalPoints(userOne.getTotalPoints()+pOne);
+        							tdUserService.save(userOne);
+        						}
+        						//二级推荐人
+        						TdUser userTwo = tdUserService.findOne(user.getUpUserTwo());
+        						if(null != userTwo){
+        							userTwo.setTotalPoints(userTwo.getTotalPoints()+pTwo);
+        							tdUserService.save(userTwo);
+        						}
+        					}
+                            
                         }
 
-                        // 同盟店返利
-//                        if (null != tdShop) {
-//                            if (null == tdShop.getTotalCash()) {
-//                                tdShop.setTotalCash(totalCash);
-//                            } else {
-//                                tdShop.setTotalCash(tdShop.getTotalCash() + totalCash);
-//                            }
-//                            order.setRebate(totalCash);//设置订单同盟店所获返利
-//                            order.setPlatformService(platformService);//设置订单平台服务费
-//                            order.setTrainService(trainService);//设置订单培训服务费
-//                            order.setOrderIncome(shopOrderincome);//设置同盟店订单收入
-//                            order = tdOrderService.save(order);
-//                            tdDiySiteService.save(tdShop);
-//                        }
                     }
 
                     order.setPayTime(new Date());

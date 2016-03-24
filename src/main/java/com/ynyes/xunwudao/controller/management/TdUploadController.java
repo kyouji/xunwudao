@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ynyes.xunwudao.service.TdArticleCategoryService;
 import com.ynyes.xunwudao.service.TdArticleService;
+import com.ynyes.xunwudao.util.ImgCompressUtil;
 import com.ynyes.xunwudao.util.SiteMagConstant;
 
 import net.sf.json.JSONObject;
@@ -97,7 +98,9 @@ public class TdUploadController {
                     new FileOutputStream(file));
             stream.write(bytes);
             stream.close();
-
+            //压缩图片
+            ImgCompressUtil.ImgCompress(uri, uri, fileName, 600, 400, (float)0.5);
+            
             res.put("status", 1);
             res.put("msg", "上传文件成功！");
             res.put("path", "/images/" + fileName);

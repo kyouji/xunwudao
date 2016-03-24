@@ -178,7 +178,7 @@ function pay(orderMoney,orderNumber){
 	if(ua.match(/MicroMessenger/i)=="micromessenger") 
 	{
 		if(orderMoney > 0){
-			location.href='/weixin/pay?orderNumber='+orderNumber;
+			location.href='/weixin/pay/getOpen?orderNumber='+orderNumber;
 		}else{
 			location.href='/user/pay/free?money=0.00&orderNumber='+orderNumber;
 		}

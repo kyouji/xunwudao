@@ -17,6 +17,20 @@
 					    background-color: red;  
 					    width: 20px; line-height: 20px; font-size: 14px;  
 					    text-align: center;  border-radius: 10px;margin-left: 86px;}
+					    
+	.new_apply2{  display: block;
+						  float: left;
+						  position: absolute;
+						  top: 9px;
+						  height: 18px;
+						  background-color: red;
+						  width: 18px;
+						  line-height: 18px;
+						  font-size: 12px;
+						  text-align: center;
+						  border-radius: 10px;
+						  margin-left: 102px;
+						  color: #ffffff;}				    
 </style>
 <script type="text/javascript">
     
@@ -75,7 +89,9 @@
 		</#if>
 		<#if ordernumberpay?? && ordernumberpay gt 0>
         	$("#new-order").addClass("new_apply");
+        	$("#new-order2").addClass("new_apply2");
         	$("#new-order").html(${ordernumberpay!''});
+        	$("#new-order2").html(${ordernumberpay!''});
 		</#if>
         // 点击顶部导航按钮
         $("#nav li").click(function () {
@@ -128,7 +144,7 @@
   var demandsnumber = 0;
   var applynumber = 0;
   $(document).ready(function () {
-        setInterval("remind()",30000);
+        setInterval("remind()",15000);
   });
   //下单自动提醒
     function remind(){    
@@ -146,6 +162,12 @@
                         
                         if(data.ordernumberpay>ordernumberpay && ordernumberpay !=0){
                             var dialog = $.dialog.alert("有新支付订单！");
+                        }else{
+                        	$("#new-order").removeClass("new_apply");
+        					$("#new-order2").removeClass("new_apply2");
+				        	$("#new-order").html('');
+				        	$("#new-order2").html('');
+				        	
                         }
                         ordernumberpay = data.ordernumberpay;
                         
@@ -182,7 +204,9 @@
                         if(data.ordernumberpay > 0)
                         {
                         	$("#new-order").addClass("new_apply");
+                        	$("#new-order2").addClass("new_apply2");
                         	$("#new-order").html(data.ordernumberpay);
+                        	$("#new-order2").html(data.ordernumberpay);
                         }
                      
                         
@@ -258,7 +282,7 @@
 	                        	<span style="margin-right:10px;">${menu.title}
 	                        	
 	                        	<b id="new-order"<#if ordernumberpay?? && ordernumberpay gt 0>class="new_apply"</#if>>
-	                        	${ordernumberpay!''}
+	                        	<#if ordernumberpay?? && ordernumberpay gt 0>${ordernumberpay!''}</#if>
 	                        	</b>
 	                        	</span>
                         	</li>    
@@ -328,7 +352,14 @@
                                                                 <div class="arrow"></div>
                                                                 <div class="expandable"></div>
                                                                 <div class="folder open"></div>
-                                                                <span>${lSecondMenu.title}</span>
+                                                                <span>
+	                                                                ${lSecondMenu.title}
+	                                                                <#if lSecondMenu.title == "待服务订单">
+		                                                                <b id="new-order2"<#if ordernumberpay?? && ordernumberpay gt 0>class="new_apply2"</#if>>
+											                        		<#if ordernumberpay?? && ordernumberpay gt 0>${ordernumberpay!''}</#if>
+											                        	</b>
+										                        	</#if>
+                                                                </span>
                                                                 </a>
                                                             </li>
                                                         </#list>

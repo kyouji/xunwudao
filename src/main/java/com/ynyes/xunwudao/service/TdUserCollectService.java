@@ -83,14 +83,14 @@ public class TdUserCollectService {
      * @param ids
      * @return
      */
-    public TdUserCollect findByUsernameAndGoodsId(String username, Long goodsId)
+    public TdUserCollect findByUserIdAndGoodsId(Long userId, Long goodsId)
     {
-        if (null == username || null == goodsId)
+        if (null == userId || null == goodsId)
         {
             return null;
         }
         
-        return repository.findByUsernameAndGoodsId(username, goodsId);
+        return repository.findByUserIdAndGoodsId(userId, goodsId);
     }
     
     public List<TdUserCollect> findAll(Iterable<Long> ids)
@@ -101,6 +101,10 @@ public class TdUserCollectService {
     public List<TdUserCollect> findByUsername(String username)
     {
         return repository.findByUsername(username);
+    }
+    
+    public List<TdUserCollect> findByUserId(Long userId){
+    	return repository.findByUserIdOrderByIdDesc(userId);
     }
     
     public Long countByGoodsId(Long goodsId)
@@ -115,11 +119,11 @@ public class TdUserCollectService {
         return repository.findAll(pageRequest);
     }
     
-    public Page<TdUserCollect> findByUsername(String username, int page, int size)
+    public Page<TdUserCollect> findByUserId(Long userId, int page, int size)
     {
         PageRequest pageRequest = new PageRequest(page, size);
         
-        return repository.findByUsernameOrderByIdDesc(username, pageRequest);
+        return repository.findByUserIdOrderByIdDesc(userId, pageRequest);
     }
     
     public Page<TdUserCollect> findByUsernameAndSearch(String username, String keywords, int page, int size)

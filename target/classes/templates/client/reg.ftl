@@ -154,13 +154,13 @@ function weixin(){
                               id:"login_container", 
                               appid: "${appId!''}", 
                               scope: "snsapi_login", 
-                              redirect_uri: "http://www.xwd33.com",
+                              redirect_uri: "http://www.xwd33.com?rfCode=${rfCode!''}",
                               state: "state",
                               style: "",
                               href: ""
                             });
                             
-        location.href='https://open.weixin.qq.com/connect/qrconnect?appid=${appId!''}&redirect_uri=http%3A%2F%2Fwww.xwd33.com&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect'                    
+        location.href='https://open.weixin.qq.com/connect/qrconnect?appid=${appId!''}&redirect_uri=http%3A%2F%2Fwww.xwd33.com?rfCode=${rfCode!''}&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect'                    
 	}
 }
 </script>
@@ -190,7 +190,7 @@ function weixin(){
         <a class="get-code" id="smsCodeBtn" href="javascript:void(0)">获取短信验证码</a>
         <input class="password" id="txt_regMcode" type="tel" placeholder="请输入收到的短信验证码">
         <input class="password" id="txt_regRfcode" type="tel" placeholder="若有推荐人请输入推荐码" value="<#if rfCode??&&rfCode?length gt 0>${rfCode}</#if>">
-        <input class="password" id="txt_regPassword" type="password" placeholder="请输入6-16位登陆密码">
+        <input class="password" id="txt_regPassword" type="text" placeholder="请输入6-16位登陆密码">
 
         <!-- 服务协议 -->
         <div class="service-agreement">
@@ -213,8 +213,8 @@ function weixin(){
           </a>
         </li>
         <li>
-          <a href="/login/mobile?goodsId=<#if goodsId??>${goodsId?c}</#if>">
-            <img src="/client/images/icon_login_phone.png" alt="手机登录">
+          <a href="javascript:void(0)">
+            <#--<img src="/client/images/icon_login_phone.png" alt="手机登录">-->
           </a>
         </li>
         <li>

@@ -571,7 +571,7 @@ public class TdLoginController extends HttpServlet {
 		if(null != goodsId)
 		{
 			return "redirect:https://open.weixin.qq.com/connect/oauth2/authorize?appid="+Configure.getAppid()+ 
-					 "&redirect_uri=http://www.xwd33.com/goods/detail/"+goodsId+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
+					 "&redirect_uri=http://www.xwd33.com/goods/detail?id="+goodsId+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
 		}
 
 		return "redirect:https://open.weixin.qq.com/connect/oauth2/authorize?appid="+Configure.getAppid()+ 
@@ -715,7 +715,7 @@ public class TdLoginController extends HttpServlet {
 						user.setLastLoginTime(new Date());
 						tdUserService.save(user);
 						request.getSession().setAttribute("username", user.getUsername());
-						return "redirect:/";
+						return "redirect:/user/center";
 					}
 					
 					 

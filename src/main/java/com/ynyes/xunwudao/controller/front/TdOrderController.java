@@ -107,14 +107,27 @@ public class TdOrderController extends AbstractPaytypeController {
     	TdOrder tdOrder = tdOrderService.findByOrderNumber(orderNumber);
 		if (null == tdOrder || !tdOrder.getStatusId().equals(2L))
 		{
-			return "redirect:/user/order/list/" + state; 
+//			return "redirect:/user/order/list/" + state; 
+			return "redirect:/user/order/list"; 
 		}
 		
+		TdUser user = tdUserService.findByUsername(username);
+		Long totalPoints = user.getTotalPoints();
+		if(null == totalPoints){
+			totalPoints = 0L;
+		}
+		Long pointUse = tdOrder.getPointUse();
+		if(null != pointUse && pointUse > 0){
+			user.setTotalPoints(totalPoints+pointUse);
+			tdUserService.save(user);
+		}
 		tdOrder.setStatusId(7L);
+
 		tdOrderService.save(tdOrder);
     	
     	
-    	return "redirect:/user/order/list/" + state;
+//    	return "redirect:/user/order/list/" + state;
+		return "redirect:/user/order/list"; 
     }
     
     //确认服务 已体检
@@ -836,7 +849,7 @@ public class TdOrderController extends AbstractPaytypeController {
 		TdOrder tdOrder = new TdOrder();
 
 		Date current = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 		String curStr = sdf.format(current);
 		Random random = new Random();
 		SimpleDateFormat ssdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -853,6 +866,7 @@ public class TdOrderController extends AbstractPaytypeController {
 		tdOrder.setUsername(username);
 		tdOrder.setUserId(user.getId());
 		tdOrder.setOrderTime(current);
+		tdOrder.setShopId(0L);
 		tdOrder.setSex(sex);
 		tdOrder.setAreaId(areaId);
 		tdOrder.setAddress(address);
@@ -1025,7 +1039,7 @@ public class TdOrderController extends AbstractPaytypeController {
 		signMap.addAttribute("nonce_str",noncestr);
 		signMap.addAttribute("out_trade_no", order.getOrderNumber());
 		signMap.addAttribute("total_fee", Math.round(order.getTotalPrice() * 100));
-		signMap.addAttribute("spbill_create_ip", "116.55.230.207");
+		signMap.addAttribute("spbill_create_ip", "116.55.233.157");
 		signMap.addAttribute("notify_url", "http://chuzi.peoit.com/order/wx_notify");
 		signMap.addAttribute("trade_type", "JSAPI");
 		signMap.addAttribute("openid", user.getOpenid());
@@ -1047,7 +1061,7 @@ public class TdOrderController extends AbstractPaytypeController {
 				+ "</nonce_str>\n"
 				+ "<notify_url>http://chuzi.peoit.com/order/wx_notify</notify_url>\n"
 				+ "<out_trade_no>" + order.getOrderNumber() + "</out_trade_no>\n"
-				+ "<spbill_create_ip>116.55.230.207</spbill_create_ip>\n"
+				+ "<spbill_create_ip>116.55.233.157</spbill_create_ip>\n"
 				+ "<total_fee>" + Math.round(order.getTotalPrice() * 100)
 				+ "</total_fee>\n" + "<trade_type>JSAPI</trade_type>\n"
 				+ "<sign>" + mysign + "</sign>\n"

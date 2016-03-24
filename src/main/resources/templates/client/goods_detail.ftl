@@ -207,7 +207,6 @@ wx.ready(function(){
     });
    
     // 监听“分享到朋友圈”按钮点击、自定义分享内容及分享结果接口
-document.querySelector('#onMenuShareTimeline').onclick = function () {
     wx.onMenuShareTimeline({
       title: title+desc,
       link: link,
@@ -226,7 +225,7 @@ document.querySelector('#onMenuShareTimeline').onclick = function () {
         alert(JSON.stringify(res));
       }
     });
-};
+
     // 监听“分享到QQ”按钮点击、自定义分享内容及分享结果接口
      wx.onMenuShareQQ({
       title: title,
@@ -349,7 +348,7 @@ var jiathis_config={
 
     <!-- 可用积分 -->
     <section class="available-points">
-      <div class="left">可用积分：<span><#if user??&&user.totalPoints??>${user.totalPoints?c!''}<#else>0</#if></span><a id="onMenuShareTimeline" href="javascript:void(0)">微信分享</a> </div>
+      <div class="left">可用积分：<span><#if user??&&user.totalPoints??>${user.totalPoints?c!''}<#else>0</#if></span> </div>
       <#--<div class="right">未使用</div>-->
             <a id="collect_add" href="javascript:collectAdd(${tdGoods.id?c});" style="float: right;
                                                       display:<#if !collected??||collected?? && collected ==0>block<#else>none</#if>;
@@ -386,7 +385,6 @@ var jiathis_config={
         <p id="weixin" class="img1 img2">
           <img src="/client/images//iconfont-weixinzhifu.png" alt="微信支付">
         </p>
-        <a href="javascript:void(0)" id="showOptionMenu">显示菜单</a>
       </div>
       <div class="div1">
         销量：<span><#if tdGoods.soldNumber??>${tdGoods.soldNumber?c}<#else>0</#if></span>

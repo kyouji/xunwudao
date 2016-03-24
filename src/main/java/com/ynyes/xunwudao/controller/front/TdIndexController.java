@@ -5,6 +5,7 @@ package com.ynyes.xunwudao.controller.front;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,9 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.tencent.common.Configure;
 import com.ynyes.xunwudao.entity.TdArticle;
+import com.ynyes.xunwudao.entity.TdGoods;
 import com.ynyes.xunwudao.entity.TdUser;
 import com.ynyes.xunwudao.service.TdArticleService;
 import com.ynyes.xunwudao.service.TdCommonService;
+import com.ynyes.xunwudao.service.TdGoodsService;
 import com.ynyes.xunwudao.service.TdUserService;
 
 import net.sf.json.JSONObject;
@@ -45,31 +48,105 @@ public class TdIndexController {
     
     @Autowired
     TdArticleService tdArticleService;
+    
+    @Autowired
+    TdGoodsService tdGoodsService;
 
     @RequestMapping("/")
-    public String index(String code,HttpServletRequest req, Device device, ModelMap map) {        
+    public String index(String code,String rfCode, HttpServletRequest req, Device device, ModelMap map) {        
     	tdCommonService.setHeader(map, req); 
-        String username = (String) req.getSession().getAttribute("username");
-        if(null != username)
-        {
-        	map.addAttribute("username" , username);
-            TdUser user = tdUserService.findByUsername(username);
-            if(null != user){
                 if (null != code) {
         			Map<String, String> res = getAccessToken(code);
-        			if (null == tdUserService.findByUsernameAndUnionid(username, res.get("unionid"))) {
-        				TdUser ever = tdUserService.findByUnionid(res.get("unionid"));
-        				if(null != ever){
-        					ever.setOpenid(null);
-        					tdUserService.save(ever);
+        			String unionid = res.get("unionid");
+        			String openid = res.get("openid");
+        			String access_token = res.get("access_token");
+        			
+        			if(null != unionid && null != openid){
+        				TdUser tdUser = tdUserService.findByUnionid(unionid);
+        				if(null == tdUser){
+        					TdWeixinController weixin = new TdWeixinController();
+        					Map<String, Object> userInfo = weixin.getWeixinInfo(access_token, openid);
+        					
+        					System.out.println("****RES"+res);
+        					System.out.println("****openid"+openid);
+        					
+        					TdUser newUser = new TdUser();
+        					newUser.setUsername("weixin_"+openid.substring(0, 8));
+        					newUser.setPassword("123456");
+        					newUser.setAddress(userInfo.get("province").toString()+userInfo.get("city").toString());
+        					newUser.setNickname(userInfo.get("nickname").toString());
+        					newUser.setSex((boolean)userInfo.get("sex"));
+        					newUser.setHeadImageUrl(userInfo.get("headimgurl").toString());
+        					newUser.setTotalPoints(0L);
+        					newUser.setStatusId(1L);
+        					newUser.setRegisterTime(new Date());
+        					newUser.setLastLoginTime(new Date());
+        					newUser.setOpenid(openid);
+        					newUser.setUnionid(unionid);
+        					tdUserService.save(newUser);
+        					
+        					Long id = newUser.getId();
+        			        String number = String.format("%04d", id);
+        					newUser.setNumber(number);
+        					tdUserService.save(newUser);
+        					
+        					map.addAttribute("user", newUser);
+        					req.getSession().setMaxInactiveInterval(60 * 60 * 2);
+        					req.getSession().setAttribute("username", newUser.getUsername());
+        					
+        					 if(null != rfCode && !rfCode.equals("")){
+        							//第一级推荐人id
+        							Long userId = Long.parseLong(rfCode.substring(0, 4));
+        							String url = null;
+        							//商品id 
+        							if(rfCode.length() > 7){
+        								Long goodsId = Long.parseLong(rfCode.substring(7));
+        								TdGoods goods = tdGoodsService.findOne(goodsId);
+        								
+        								//让新用户登陆后跳转到分享的商品详情页面
+        								if( null != goods){
+        									 url = "/goods/detail?id="+goods.getId();
+        								
+        								}
+        							}
+        							TdUser userOne = tdUserService.findOne(userId);
+        							
+        							
+        							if(null == userOne){
+        								System.out.println("userOne is NULL");
+        							}
+        							if(null != userOne){
+        								//第一级推荐人
+        								newUser.setUpUserOne(userOne.getId());
+        								//第二级推荐人
+        								Long userTwoUpId = userOne.getUpUserOne();
+        								if(null != userTwoUpId){
+        									TdUser userTwo = tdUserService.findOne(userTwoUpId);
+        									if(null != userTwo){
+        										newUser.setUpUserTwo(userTwo.getId());
+        									}
+        								}
+        							}
+        			        
+        				        if(null != url && !url.equals("")){
+        				        	return "redirect:"+url;
+        				        }else{
+        				        	return "redirect:/user/center?WX=1";
+        				        }
+        			        }
         				}
-        				user.setUnionid(res.get("unionid"));
-        				tdUserService.save(user);
+        				else{
+        					tdUser.setLastLoginTime(new Date());
+        					tdUserService.save(tdUser);
+        					map.addAttribute("user", tdUser);
+        					req.getSession().setMaxInactiveInterval(60 * 60 * 2);
+        					req.getSession().setAttribute("username", tdUser.getUsername());
+        					return "redirect:/user/center";
+        				}
         			}
         		}
-            }
-            map.addAttribute("user", user);
-        }
+            
+     
         map.addAttribute("showIcon", 1);
         
         return "/client/welcome";

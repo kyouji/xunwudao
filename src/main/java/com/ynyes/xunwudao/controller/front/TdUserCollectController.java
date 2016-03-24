@@ -63,17 +63,17 @@ public class TdUserCollectController {
 	      }
 	
 	      String username = (String) req.getSession().getAttribute("username");
-	
+	      
 	      if (null == username) {
 	          res.put("msg", "请先登录");
 	          res.put("login", 1);
 	          return res;
 	      }
-	
+	      Long userId = tdUserService.findByUsername(username).getId();
 	      res.put("code", 0);
 	
 	      // 没有收藏
-	      if (null == tdUserCollectService.findByUsernameAndGoodsId(username,
+	      if (null == tdUserCollectService.findByUserIdAndGoodsId(userId,
 	              goodsId)) {
 	          TdGoods goods = tdGoodsService.findOne(goodsId);
 	
@@ -93,7 +93,7 @@ public class TdUserCollectController {
 	
 	          TdUserCollect collect = new TdUserCollect();
 	
-	          collect.setUsername(username);
+	          collect.setUserId(userId);
 	          collect.setGoodsId(goods.getId());
 	          collect.setGoodsCoverImageUri(goods.getCoverImageUri());
 	          collect.setGoodsTitle(goods.getTitle());
@@ -134,11 +134,11 @@ public class TdUserCollectController {
 	          res.put("login", 1);
 	          return res;
 	      }
-	
+	      Long userId = tdUserService.findByUsername(username).getId();
 	      res.put("code", 0);
 	
 	      // 没有收藏
-	      if (null != tdUserCollectService.findByUsernameAndGoodsId(username,
+	      if (null != tdUserCollectService.findByUserIdAndGoodsId(userId,
 	              goodsId)) {
 	          TdGoods goods = tdGoodsService.findOne(goodsId);
 	
@@ -156,7 +156,7 @@ public class TdUserCollectController {
 	          
 	          tdGoodsService.save(goods);
 	
-	          TdUserCollect collect = tdUserCollectService.findByUsernameAndGoodsId(username, goodsId);
+	          TdUserCollect collect = tdUserCollectService.findByUserIdAndGoodsId(userId, goodsId);
 	
 	          tdUserCollectService.delete(collect);
 	
@@ -191,12 +191,12 @@ public class TdUserCollectController {
 		          res.put("login", 1);
 		          return res;
 		      }
-		
+		      Long userId = tdUserService.findByUsername(username).getId();
 		      res.put("code", 0);
 		
 		      // 没有收藏
 		      for(Long goodsId : goodsIds){
-		    	  if (null != tdUserCollectService.findByUsernameAndGoodsId(username,
+		    	  if (null != tdUserCollectService.findByUserIdAndGoodsId(userId,
 			              goodsId)) {
 			          TdGoods goods = tdGoodsService.findOne(goodsId);
 			
@@ -214,7 +214,7 @@ public class TdUserCollectController {
 			          
 			          tdGoodsService.save(goods);
 			
-			          TdUserCollect collect = tdUserCollectService.findByUsernameAndGoodsId(username, goodsId);
+			          TdUserCollect collect = tdUserCollectService.findByUserIdAndGoodsId(userId, goodsId);
 			
 			          tdUserCollectService.delete(collect);
 			          
@@ -242,7 +242,7 @@ public class TdUserCollectController {
         TdUser tdUser = tdUserService.findByUsernameAndIsEnabled(username);
 
         map.addAttribute("user", tdUser);
-    	List<TdUserCollect> collectList = tdUserCollectService.findByUsername(username);
+    	List<TdUserCollect> collectList = tdUserCollectService.findByUserId(tdUser.getId());
     	map.addAttribute("collect_list", collectList);
     	map.addAttribute("showIcon", 4);
     	

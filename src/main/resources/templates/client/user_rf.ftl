@@ -69,6 +69,7 @@ function showTwo(id){
 
   <!-- 我的分享 -->
   <article class="my-share">
+  	
     <#if one_list?? && one_list?size gt 0>
         <#list one_list as one>
 		    <a href="javascript:showTwo(${one.id?c});">

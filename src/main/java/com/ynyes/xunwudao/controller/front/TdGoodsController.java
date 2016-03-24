@@ -141,7 +141,8 @@ public class TdGoodsController {
     			map.addAttribute("tdGoods", tdGoods);
     			
     			if(null != username){
-    				TdUserCollect collect = tdUserCollectService.findByUsernameAndGoodsId(username, tdGoods.getId());
+    				Long userId = tdUserService.findByUsername(username).getId();
+    				TdUserCollect collect = tdUserCollectService.findByUserIdAndGoodsId(userId, tdGoods.getId());
     				if(null != collect){
     					map.addAttribute("collected", 1);
     				}

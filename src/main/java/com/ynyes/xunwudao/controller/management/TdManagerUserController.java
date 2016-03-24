@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,15 +22,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ynyes.xunwudao.entity.TdApply;
-import com.ynyes.xunwudao.entity.TdApplyType;
-import com.ynyes.xunwudao.entity.TdEnterType;
 import com.ynyes.xunwudao.entity.TdUser;
+import com.ynyes.xunwudao.entity.TdUserCollect;
 import com.ynyes.xunwudao.service.TdApplyService;
 import com.ynyes.xunwudao.service.TdApplyTypeService;
 import com.ynyes.xunwudao.service.TdAreaService;
 import com.ynyes.xunwudao.service.TdEnterTypeService;
 import com.ynyes.xunwudao.service.TdManagerLogService;
 import com.ynyes.xunwudao.service.TdPhotoService;
+import com.ynyes.xunwudao.service.TdUserCollectService;
 import com.ynyes.xunwudao.service.TdUserService;
 import com.ynyes.xunwudao.util.SiteMagConstant;
 
@@ -61,9 +62,12 @@ public class TdManagerUserController {
     @Autowired
     TdEnterTypeService tdEnterTypeService;
 
+    @Autowired
+    TdUserCollectService tdUserCollectService;
     
     @Autowired
     TdPhotoService tdPhotoService;
+    
     @RequestMapping(value="/check", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, String> validateForm(String param, Long id) {
@@ -558,8 +562,15 @@ public class TdManagerUserController {
                 if (type.equalsIgnoreCase("user")) // 用户
                 {
                     tdUserService.delete(tdUserService.findOne(id));
+                    //同时删除用户收藏
+                    List<TdUserCollect> collectList = tdUserCollectService.findByUserId(id);
+                    if(null != collectList){
+                    	tdUserCollectService.delete(collectList);
+                    }
+                    
+                    
                 }
-                else if (type.equalsIgnoreCase("apply")) // 用户
+                else if (type.equalsIgnoreCase("apply")) // 
                 {
                     tdApplyService.delete(tdApplyService.findOne(id));
                 }

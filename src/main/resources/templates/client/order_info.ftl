@@ -213,8 +213,7 @@ function usePoint()
 					alert(data.msg);
 				}
 				else{
-					console.log("成功！！！！");
-					location.href="/user/order/list/2";
+					location.href="/user/order/list";
 				}
 		      }
 		  });

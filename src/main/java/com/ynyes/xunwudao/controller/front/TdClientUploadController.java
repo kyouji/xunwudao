@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-
+import com.ynyes.xunwudao.util.ImgCompressUtil;
 import com.ynyes.xunwudao.entity.TdPhoto;
 import com.ynyes.xunwudao.entity.TdUser;
 import com.ynyes.xunwudao.service.TdPhotoService;
@@ -81,6 +81,9 @@ public class TdClientUploadController {
                     new FileOutputStream(file));
             stream.write(bytes);
             stream.close();
+            //压缩图片
+            ImgCompressUtil.ImgCompress(uri, uri, fileName, 100, 100, (float)0.3);
+
             TdUser user = tdUserService.findOne(id);
             if(null != user)
             {

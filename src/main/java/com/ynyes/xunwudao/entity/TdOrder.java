@@ -95,7 +95,7 @@ public class TdOrder {
     @Column
     private String idCard;
     
-    // 线下同盟店
+    // 是否查看
     @Column
     private Long shopId;
     

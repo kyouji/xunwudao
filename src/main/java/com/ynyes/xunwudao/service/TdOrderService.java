@@ -393,6 +393,10 @@ public class TdOrderService {
     	return repository.findByStatusId(statusId);
     }
     
+    public List<TdOrder> findByStatusIdAndShopId(Long statusId, Long shopId){
+    	return repository.findByStatusIdAndShopId(statusId, shopId);
+    }
+    
     public List<TdOrder> findAll(Long statusId){
     	return (List<TdOrder>) repository.findAll();
     }

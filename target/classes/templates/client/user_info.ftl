@@ -87,7 +87,7 @@
 <body>
 <form id="upload" name="upload" enctype="multipart/form-data" action="/client/userHead/upload" method="post">
 	<input type="hidden" id="id" name="id" value="<#if user??>${user.id?c!''}</#if>"></input>
-	<input id="file" style="display:none;" class="area_save_btn" name="Filedata"  type="file" value="<#if user??>${user.headImageUrl!''}</#if>" onchange="javascript:formSubmit();"/>
+	<input id="file" style="display:none;" class="area_save_btn" name="Filedata" capture="camera"  type="file" value="<#if user??>${user.headImageUrl!''}</#if>" onchange="javascript:formSubmit();"/>
   <!-- 头部 -->
   <header class="login-head">
     <a class="points-back" href="/user/center"></a>

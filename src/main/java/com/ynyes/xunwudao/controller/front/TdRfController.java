@@ -2,6 +2,7 @@ package com.ynyes.xunwudao.controller.front;
 
 
 import java.util.List;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -42,8 +43,9 @@ public class TdRfController {
 
 		TdUser tdUser = tdUserService.findByUsername(username);
 		if (null == tdUser) {
-			return "/client/login";
+			return "redirect:/login";
 		}
+		
 		if(null != tdUser){
 			//下属第一层会员
 			List<TdUser> oneList = tdUserService.findByUpUserOneOrderByLastLoginTimeDesc(tdUser.getId());
