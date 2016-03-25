@@ -23,20 +23,23 @@
   text-align: center;
   background-color: #72d377;
   border-radius: 3px;}
+  
+  .remove-it{
+  margin-top:2%;
+  z-index: 2;
+  width: 48px;
+  height: 30px;
+  line-height: 30px;
+  color: #fff;
+  text-align: center;
+  background-color: #72d377;
+  border-radius: 3px;}
 </style>
 <!-- js -->
 <script type="text/javascript" src="/client/js/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="/client/js/index.js"></script>
 	<script type="text/javascript">
 		
-		$(document).ready(function(){
-			var mobileAru = $("#user_mobile_aru").html();
-			if(mobileAru == ""){
-				if(confirm("您尚未绑定手机号，现在绑定吗？")){
-					location.href="/user/change/mobile";
-				}
-			}
-		});
 		function formSubmit()
 		{
 			form = document.forms["upload"];
@@ -82,6 +85,50 @@
 			      }
 			  });
 		}
+		
+		function removeWX(){
+			if(confirm("解除后将不能通过该微信登陆，确认吗？")){
+				$.ajax({
+			      type:"post",
+			      url:"/user/remove/weixin",
+			      success:function(data){
+					if (data.code == 1)
+					{
+			            alert(data.msg);
+			            if(data.login==1)
+			            {
+			            	location.href='/login';
+			            }
+					}
+					else{
+						alert("解除成功！");
+					}
+			      }
+			  });
+			}
+		}
+		
+		function removeQQ(){
+			if(confirm("解除后将不能通过该QQ登陆，确认吗？")){
+				$.ajax({
+			      type:"post",
+			      url:"/user/remove/qq",
+			      success:function(data){
+					if (data.code == 1)
+					{
+			            alert(data.msg);
+			            if(data.login==1)
+			            {
+			            	location.href='/login';
+			            }
+					}
+					else{
+						alert("解除成功！");
+					}
+			      }
+			  });
+			}
+		}		
 	</script>
 </head>
 <body>
@@ -127,6 +174,17 @@
         <a class="change-mobile" id="smsCodeBtn" href="/user/change/mobile">修改</a>
       </div>
       <div class="inp">
+        <label>区域：</label>
+        <select name="areaId" id="areaId" class="nece">
+            <option value=''>请选择区域</option>
+            <#if area_list??>
+            	<#list area_list as item>
+            		<option value="${item.id?c}" <#if user?? && user.areaId?? && user.areaId == item.id>selected="selected"</#if> >${item.title!''}</option>
+            	</#list>
+            </#if>		
+          </select>
+      </div>
+      <div class="inp">
         <label>地址：</label>
         <input type="text" name="address" id="address" value="<#if user??>${user.address!''}</#if>">
       </div>
@@ -138,6 +196,14 @@
         <label>密码：</label>
         <input type="text" name="password" id="password" value="<#if user??>${user.password!''}</#if>">
       </div>
+      <div class="inp">
+	      <#if user.openid?? && user.openid?length gt 0>
+	      	<input class="remove-it" type="button" onclick="javascript:removeWX();" value="解绑微信">
+	      </#if>
+	      <#if user.qqOpenid?? && user.qqOpenid?length gt 0>
+	      	<input class="remove-it" type="button" onclick="javascript:removeQQ();" value="解绑QQ">
+		  </#if>
+	  </div>
     </section>
   </article>
   <!-- 个人信息 END -->
@@ -148,6 +214,16 @@
   <footer class="index-foot">
 	<#include "/client/common_footer.ftl" />
   </footer>
+<script>
+  $(document).ready(function(){
+			var mobileAru = $("#user_mobile_aru").html();
+			if(mobileAru == ""){
+				if(confirm("您尚未绑定手机号，现在绑定吗？")){
+					location.href="/user/change/mobile";
+				}
+			}
+		});
+</script>		
   <!-- 底部 END -->
 </form>
 </body>

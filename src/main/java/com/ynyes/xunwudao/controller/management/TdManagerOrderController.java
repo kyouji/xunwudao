@@ -2024,6 +2024,20 @@ public class TdManagerOrderController {
             // 确认取消
             else if (type.equalsIgnoreCase("orderCancel"))
             {
+            	//返还积分
+            	if(order.getStatusId()!= 7){
+            		TdUser user = tdUserService.findOne(order.getUserId());
+            		Long totalPoints = user.getTotalPoints();
+            		if(null == totalPoints){
+            			totalPoints = 0L;
+            		}
+            		Long pointUse = order.getPointUse();
+            		if(null != pointUse && pointUse > 0){
+            			user.setTotalPoints(totalPoints+pointUse);
+            			tdUserService.save(user);
+            		}
+            	}
+        		
                 order.setStatusId(7L);
                 order.setCancelTime(new Date());
             }

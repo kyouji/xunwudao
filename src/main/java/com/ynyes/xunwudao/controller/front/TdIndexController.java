@@ -260,4 +260,10 @@ public class TdIndexController {
         }  
 		return res;
 	}
+	
+    @RequestMapping("/setmobile")
+    public String setmobile(HttpServletRequest req, Device device, ModelMap map) {        
+    	map.addAttribute("sex", true);
+        return "/client/user_set_mobile";
+    }
 }

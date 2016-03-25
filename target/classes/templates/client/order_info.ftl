@@ -16,6 +16,18 @@
 <script type="text/javascript" src="/client/js/index.js"></script>
 <script>
 $(document).ready(function(){
+//判断支付方式
+	var ua = navigator.userAgent.toLowerCase();
+	if(ua.match(/MicroMessenger/i)=="micromessenger") {
+		$("#weixin").css("display","block");
+		$("#zhifubao").css("display","none");
+		$("#payTypeTitle").val("微信");
+	}else{
+		$("#zhifubao").css("display","block");
+		$("#weixin").css("display","none");
+		$("#payTypeTitle").val("支付宝");
+	}
+
 //初始化总价格
 	var totalPrice = 0.00;
 	var priceObj = $("input[name='price']");
@@ -38,7 +50,8 @@ $(document).ready(function(){
 	
 	
 	//提交表单控制 关键项输入了才能提交
-	$(".nece").change(function(){
+	//$(".nece").change(function(){
+	$('.nece').on("change input", function () {
 		//var inputObj = $("input[class='nece']");
 		var inputObj = document.getElementsByClassName("nece");
 		var a = 0  									//必选项是否输入的标识
@@ -109,8 +122,8 @@ function setTotalPrice()
 	    	}
 		}
 	
-	$(".total-price").html(totalPrice.toFixed(2)-pointD);
-	$("#original_price").html(totalPrice.toFixed(2));  //初始价格 
+	$(".total-price").html((totalPrice-pointD).toFixed(2));
+	$("#original_price").html("￥"+totalPrice.toFixed(2));  //初始价格 
 	
 }
 
@@ -174,6 +187,7 @@ function usePoint()
 		var idCard = $("#idCard").val();
 		var serviceTime = $("#serviceTime").val();
 		var userRemarkInfo = $("#userRemarkInfo").val();
+		var payTypeTitle = $("#payTypeTitle").val();
 		
 		
 		/*商品信息*/
@@ -206,6 +220,7 @@ function usePoint()
 		      			"userRemarkInfo":userRemarkInfo,
 		      			"cartGoodsIds":cartGoodsIds,
 		      			"quantities":quantities,
+		      			"payTypeTitle":payTypeTitle,
 		      			"pointD":pointD},
 		      success:function(data){
 				if (data.code == 1)
@@ -213,7 +228,16 @@ function usePoint()
 					alert(data.msg);
 				}
 				else{
-					location.href="/user/order/list";
+					if(typeof(data.orderNumber) != "undefined" && typeof(data.money) != "undefined"){
+						if(data.payType == 0){
+							location.href='/user/pay/alipay/recharge?money='+data.money+"&orderNumber="+data.orderNumber;
+						}else if(data.payType == 1){
+							location.href='/weixin/pay/getOpen?orderNumber='+data.orderNumber;
+						}
+						
+					}
+					
+					//location.href="/user/order/list";
 				}
 		      }
 		  });
@@ -287,7 +311,7 @@ function usePoint()
             <option value=''>请选择区域</option>
             <#if area_list??>
             	<#list area_list as item>
-            		<option value="${item.id?c}">${item.title!''}</option>
+            		<option value="${item.id?c}" <#if user?? && user.areaId?? && user.areaId == item.id>selected="selected"</#if> >${item.title!''}</option>
             	</#list>
             </#if>		
           </select>
@@ -322,7 +346,19 @@ function usePoint()
         <label>留言</label>
         <input class="right-inp" type="text" id="userRemarkInfo">
       </article>
+      <!-- 支付方式 -->
+      <article class="receiver-phone">
+      	 <input type="hidden" id="payTypeTitle" value="">
+         <label>支付方式：</label>
+        <p id="zhifubao" class="img1 active">
+          <img src="/client/images//iconfont-zhifubao.png" width=48 height=22 alt="支付宝支付">
+        </p>
+        <p id="weixin" class="img1 img2">
+          <img src="/client/images//iconfont-weixinzhifu.png" alt="微信支付">
+        </p>
+      </article>
     </section>
+    
 
     <!-- 使用积分 -->
     <a class="use-points" href="javascript:usePoint();">
@@ -370,7 +406,7 @@ function usePoint()
       </div>
       <div class="div3">
         <strong class="str1">还需支付</strong>
-        <strong class="str2 total-price">￥318.00</strong>
+        <strong class="str2 total-price"></strong>
       </div>
     </section>
     <!-- 商品清单 END -->

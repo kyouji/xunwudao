@@ -17,11 +17,16 @@
 <script>
 //分享
 function share(){
-	if($(".jiathis_style_m").css("display") == "none"){
-		$(".jiathis_style_m").css("display","block");
-	}
-	else{
-		$(".jiathis_style_m").css("display","none");
+	var ua = navigator.userAgent.toLowerCase();
+	if(ua.match(/MicroMessenger/i)=="micromessenger") {
+		alert("请在微信菜单中点击分享！");
+	}else{
+		if($(".jiathis_style_m").css("display") == "none"){
+			$(".jiathis_style_m").css("display","block");
+		}
+		else{
+			$(".jiathis_style_m").css("display","none");
+		}
 	}
 }
 </script>
@@ -50,6 +55,7 @@ function share(){
                 'onMenuShareAppMessage',
                 'onMenuShareQQ',
                 'onMenuShareWeibo',
+                "showAllNonBaseMenuItem",
                 'onMenuShareQZone'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
 });
 
@@ -181,8 +187,13 @@ document.querySelector('#onMenuShareTimeline').onclick = function () {
      document.querySelector('#showOptionMenu').onclick = function () {
     wx.showOptionMenu();
   };
+ 
+
 });
+
+
 </script>
+
 </head>
 <body>
 
@@ -200,8 +211,7 @@ document.querySelector('#onMenuShareTimeline').onclick = function () {
     <div class="get-points">
       <p>如何获得积分：</p>
       <p>我的推荐码：${rfCode!''}</p>
-      <p>分享给好友，即可根据其消费获取相应的积分<a href="javascript:share();">立即分享</a><a id="showOptionMenu" >微信分享</a></p>
-      <a id="onMenuShareTimeline" >微信到朋友圈</a>
+      <p>分享给好友，即可根据其消费获取相应的积分<a id="share_app" href="javascript:share();">立即分享</a>
       <!-- JiaThis Button BEGIN -->
 <div class="jiathis_style_m" style="display:none;">
 <a class="jiathis_button_qzone"></a>

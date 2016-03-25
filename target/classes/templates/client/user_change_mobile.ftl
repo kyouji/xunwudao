@@ -92,7 +92,7 @@ $(document).ready(function(){
         $("#smsCodeBtn").css("background-color","#999999");
 
         $.ajax({  
-            url : "/reg/smscode",  
+            url : "/retrieve/smscode",  
             async : true,  
             type : 'GET',  
             data : {"mobile": mob,
@@ -100,7 +100,6 @@ $(document).ready(function(){
             success : function(res) {  
             console.log("message:"+res.message);
             console.log("status:"+res.status);
-            console.log(">>>>CODE<<<<:"+res.smscode);
                 if(1==res.status||0==res.status){
                      t1 = setInterval(tip, 1000);  
                 }

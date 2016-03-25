@@ -368,6 +368,15 @@ public class TdLoginController extends HttpServlet {
 				return res;
 			}
 		}
+		
+		String CODE_MOBILE = (String) req.getSession().getAttribute("CODE_MOBILE");
+		if(null != CODE_MOBILE){
+			if(!CODE_MOBILE.equalsIgnoreCase(mobile)){
+				res.put("msg", "手机号与短信验证不一致！");
+				res.put("id", "txt_regMobile");
+				return res;
+			}
+	    }
 
 		TdUser user = tdUserService.findByUsernameAndIsEnabled(mobile);
 		if (null != user) {
@@ -620,7 +629,7 @@ public class TdLoginController extends HttpServlet {
 	 * QQ互联回调
 	 */
 	@RequestMapping(value="/qq/return",method = RequestMethod.GET)
-	public String qqGetAccessToken(String code, String state, String rfCode, HttpServletRequest request, HttpServletResponse response){
+	public String qqGetAccessToken(String code, String state, String rfCode, ModelMap map,HttpServletRequest request, HttpServletResponse response){
 		Map<String,String> userinfo = null;
 		Map<String,String> token = null;
 		String qqOpenid = null;
@@ -643,71 +652,87 @@ public class TdLoginController extends HttpServlet {
 
 					TdUser user = tdUserService.findByQqOpenid(qqOpenid);
 					if(null == user){
-						//用户不存在，跳转绑定页面
-						TdUser newUser  = new TdUser();
-						newUser.setNickname(userinfo.get("nickname"));
-						newUser.setQqOpenid(qqOpenid);
-						newUser.setRegisterTime(new Date());
-						newUser.setStatusId(1L);
-						newUser.setTotalPoints(0L);
-						newUser.setHeadImageUrl(userinfo.get("figureurl_qq_1"));
-						newUser.setPassword("123456"); //password不能为空
-						newUser.setUsername(qqOpenid);
-						tdUserService.save(newUser);
+						System.out.println("USER INFO :::::::::::::::::::::::::"+userinfo);
+						map.addAttribute("headImageUrl", userinfo.get("figureurl_qq_1"));
+						map.addAttribute("nickname", userinfo.get("nickname"));
+						if(null != userinfo.get("gender") && userinfo.get("gender").equals("女")){
+							map.addAttribute("sex", false);
+						}else{
+							map.addAttribute("sex", true);
+						}
 						
-				        Long id = newUser.getId();
-				        String number = String.format("%04d", id);
-				        newUser.setUsername("qq"+new Random().nextInt(9000)+newUser.getId());
-				        newUser.setNumber(number);
-				        tdUserService.save(newUser);
+//						map.addAttribute("address", userInfo.get("province").toString()+userInfo.get("city").toString());
+//						map.addAttribute("province", userInfo.get("province").toString());
+						
+						map.addAttribute("qqOpenid", qqOpenid);
+						map.addAttribute("rfCode", rfCode);
+						return "/client/user_set_mobile";
+						
+						//用户不存在，跳转绑定页面
+//						TdUser newUser  = new TdUser();
+//						newUser.setNickname(userinfo.get("nickname"));
+//						newUser.setQqOpenid(qqOpenid);
+//						newUser.setRegisterTime(new Date());
+//						newUser.setStatusId(1L);
+//						newUser.setTotalPoints(0L);
+//						newUser.setHeadImageUrl(userinfo.get("figureurl_qq_1"));
+//						newUser.setPassword("123456"); //password不能为空
+//						newUser.setUsername(qqOpenid);
+//						tdUserService.save(newUser);
+//						
+//				        Long id = newUser.getId();
+//				        String number = String.format("%04d", id);
+//				        newUser.setUsername("qq"+new Random().nextInt(9000)+newUser.getId());
+//				        newUser.setNumber(number);
+//				        tdUserService.save(newUser);
+//				        
+//						//建立分销关系
+//				        if(null == rfCode || rfCode.equals("")){
+//				        	 rfCode = (String)request.getSession().getAttribute("rfCode");
+//				        }
+//				        
+//				        if(null != rfCode && !rfCode.equals("")){
+//								//第一级推荐人id
+//								Long userId = Long.parseLong(rfCode.substring(0, 4));
+//								String url = null;
+//								//商品id 
+//								if(rfCode.length() > 7){
+//									Long goodsId = Long.parseLong(rfCode.substring(7));
+//									TdGoods goods = tdGoodsService.findOne(goodsId);
+//									
+//									//让新用户登陆后跳转到分享的商品详情页面
+//									if( null != goods){
+//										 url = "/goods/detail?id="+goods.getId();
+//									
+//									}
+//								}
+//								TdUser userOne = tdUserService.findOne(userId);
+//								
+//								
+//								if(null == userOne){
+//									System.out.println("userOne is NULL");
+//								}
+//								if(null != userOne){
+//									//第一级推荐人
+//									newUser.setUpUserOne(userOne.getId());
+//									//第二级推荐人
+//									Long userTwoUpId = userOne.getUpUserOne();
+//									if(null != userTwoUpId){
+//										TdUser userTwo = tdUserService.findOne(userTwoUpId);
+//										if(null != userTwo){
+//											newUser.setUpUserTwo(userTwo.getId());
+//										}
+//									}
+//								}
 				        
-						//建立分销关系
-				        if(null == rfCode || rfCode.equals("")){
-				        	 rfCode = (String)request.getSession().getAttribute("rfCode");
-				        }
-				        
-				        if(null != rfCode && !rfCode.equals("")){
-								//第一级推荐人id
-								Long userId = Long.parseLong(rfCode.substring(0, 4));
-								String url = null;
-								//商品id 
-								if(rfCode.length() > 7){
-									Long goodsId = Long.parseLong(rfCode.substring(7));
-									TdGoods goods = tdGoodsService.findOne(goodsId);
-									
-									//让新用户登陆后跳转到分享的商品详情页面
-									if( null != goods){
-										 url = "/goods/detail?id="+goods.getId();
-									
-									}
-								}
-								TdUser userOne = tdUserService.findOne(userId);
-								
-								
-								if(null == userOne){
-									System.out.println("userOne is NULL");
-								}
-								if(null != userOne){
-									//第一级推荐人
-									newUser.setUpUserOne(userOne.getId());
-									//第二级推荐人
-									Long userTwoUpId = userOne.getUpUserOne();
-									if(null != userTwoUpId){
-										TdUser userTwo = tdUserService.findOne(userTwoUpId);
-										if(null != userTwo){
-											newUser.setUpUserTwo(userTwo.getId());
-										}
-									}
-								}
-				        
-							request.getSession().setAttribute("username", newUser.getUsername());		
-					        
-					        if(null != url && !url.equals("")){
-					        	return "redirect:"+url;
-					        }else{
-					        	return "redirect:/user/center?QQ=1";
-					        }
-				        }
+//							request.getSession().setAttribute("username", newUser.getUsername());		
+//					        
+//					        if(null != url && !url.equals("")){
+//					        	return "redirect:"+url;
+//					        }else{
+//					        	return "redirect:/user/center?QQ=1";
+//					        }
+//				        }
 //							return "/client/accredit_login";
 						}
 					else{

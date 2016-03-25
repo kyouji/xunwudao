@@ -7,7 +7,7 @@
 <meta name="description" content="<#if site??>${site.seoDescription!''}</#if>">
 <meta name="copyright" content="<#if site??>${site.copyright!''}</#if>" />
 <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
-<title>循伍道-手机登陆</title>
+<title>循伍道-第三方登陆</title>
 <!-- css -->
 <link rel="stylesheet" type="text/css" href="/client/css/common.css"/>
 <link rel="stylesheet" type="text/css" href="/client/css/main.css"/>
@@ -16,6 +16,8 @@
 var seed=60;    //60秒  
 var t1=null; 
 $(document).ready(function(){
+	alert("请先绑定您的手机号！");
+
 	$("#agree_check").click(
 		function(){
 			$("#agree_check").toggleClass("checked");
@@ -36,28 +38,57 @@ $(document).ready(function(){
 	$("#reg_submit").bind("click", function(){
 		var mobile=$("#txt_regMobile").val();
 		var mCode=$("#txt_regMcode").val();
-		var code=$("#txt_regCode").val();
+		
+		var rfCode=$("#txt_rfCode").val();
+		var openid=$("#txt_openid").val();
+		var unionid=$("#txt_unionid").val();
+		var qqOpenid=$("#txt_qqOpenid").val();
+		var username=$("#txt_username").val();
+		var password=$("#txt_password").val();
+		var headImageUrl = $("#txt_headImageUrl").val();
+		var nickname = $("#txt_nickname").val();
+		var sex = $("#txt_sex").val();
+		var address = $("#txt_address").val();
+		var province = $("#txt_province").val();
 		
 		$.ajax({  
-            url : "/login/mobile/submit",  
+            url : "/user/set/mobile",  
             async : true,  
             type : 'POST',  
             data : {"mobile": mobile,
             			"smsCode": mCode,
-            			"code": code},  
+            			"rfCode": rfCode,
+            			"openid": openid,
+            			"unionid":unionid,
+            			"qqOpenid":qqOpenid,
+            			"headImageUrl":headImageUrl,
+            			"nickname":nickname,
+            			"sex":sex,
+            			"address":address,
+            			"province":province,
+            			"username": username,
+            			"password": password},  
             success : function(data) {  
                 if(data.code==1){
-                	alert(data.msg);
-                	location.href='/reg';
+                	if(typeof(data.addall != "undefined")){
+                		if(confirm(data.msg)){
+                			changeTo(data.addall,openid,unionid,username,password);
+                		}
+                	}else{
+                		alert(data.msg);
+	                	if(typeof(data.id) != "undefined"){
+	                		document.getElementById(data.id).focus;
+	                	}
+                	}
                 }
                 else if(data.code==0){
+                	alert("绑定成功");
                 	if(typeof(data.url) != "undefined"){
                 		location.href=data.url;
                 	}
                 	else{
                 		location.href='/user/center';
                 	}
-                	console.log("url:"+data.url);
                 }
              }   
         });
@@ -83,14 +114,12 @@ $(document).ready(function(){
         $("#smsCodeBtn").css("background-color","#999999");
 
         $.ajax({  
-            url : "/login/mobile/smscode",  
+            url : "/reg/smscode",  
             async : true,  
             type : 'GET',  
             data : {"mobile": mob,
             			"code":code},  
             success : function(res) {  
-            console.log("message:"+res.message);
-            console.log("status:"+res.status);
                 if(1==res.status||0==res.status){
                      t1 = setInterval(tip, 1000);  
                 }
@@ -118,6 +147,28 @@ $(document).ready(function(){
     }); 
 });
 
+function changeTo(mobile,openid,unionid,username,password){
+	var mobile = mobile;
+	$.ajax({  
+            url : "/user/changeTo",  
+            async : true,  
+            type : 'POST',  
+            data : {"mobile": mobile,
+            		    "openid":openid,
+            		    "username":username,
+            		    "password":password},  
+            success : function(data) {  
+                if(data.code==1){
+            		alert(data.msg);
+                }
+                else if(data.code==0){
+                	alert("修改成功");
+            		location.href='/user/center';
+                }
+             }   
+        });
+}
+
 function tip() 
 {  
     seed--;  
@@ -140,24 +191,42 @@ function tip()
   <!-- 头部 -->
   <header class="login-head">
     <a class="back" href="javascript:history.back(-1);"></a>
-    <p>手机登陆</p>
-    <a class="btn-registered" href="/reg">注册</a>
+    <p>绑定手机号</p>
   </header>
   <!-- 头部 END -->
 
   <!-- 注册 -->
+  <article class="personal-center">
+  	<section class="common-top">
+      <div class="head-pic">
+        <img src="<#if headImageUrl??&&headImageUrl?length gt 0>${headImageUrl}<#else>/client/images/default.jpg</#if>" alt="头像">
+      </div>
+      <div class="phone-num"><#if nickname??&&nickname?length gt 0>${nickname}</#if></div>
+    </section>
+ </article>  
   <article class="login-form">
     <form>
       <section class="enter-info">
-        <input class="user-name"  id="txt_regMobile"  type="tel" placeholder="请输入您的手机号">
+      	<input  id="txt_rfCode"  type="hidden" value="${rfCode!''}"/>
+      	<input  id="txt_openid"  type="hidden" value="${openid!''}"/>
+      	<input  id="txt_unionid"  type="hidden" value="${unionid!''}"/>
+      	<input  id="txt_qqOpenid"  type="hidden" value="${qqOpenid!''}"/>
+      	<input  id="txt_headImageUrl"  type="hidden" value="${headImageUrl!''}"/>
+      	<input  id="txt_nickname"  type="hidden" value="${nickname!''}"/>
+      	<input  id="txt_address"  type="hidden" value="${address!''}"/>
+      	<input  id="txt_province"  type="hidden" value="${province!''}"/>
+      	<input  id="txt_sex"  type="hidden" value="<#if sex??>${sex?c}</#if>"/>
+      	
+        <input class="user-name"  id="txt_regMobile"  type="tel" placeholder="请输入手机号">
               <!--验证码-->
     	<input class="password" id="txt_regCode"  type="text" placeholder="验证码"/>
         <a><img src="/verify" height=46.7px alt="验证码" onclick="this.src = '/verify?date='+Math.random();" id="yzm"/></a>
         <!-- 获取验证码 -->
-        <a class="get-code" style="top:24%;" id="smsCodeBtn" href="javascript:void(0)">获取短信验证码</a>
+        <a class="get-code" style="top:17%;" id="smsCodeBtn" href="javascript:void(0)">获取短信验证码</a>
         <input class="password" id="txt_regMcode" type="tel" placeholder="请输入收到的短信验证码">
-
-        <input class="btn-login" id="reg_submit" type="button"  value="登陆" >
+		<input class="user-name" id="txt_username"  type="text" placeholder="用户名"/>
+		<input class="password" id="txt_password"  type="text" placeholder="密码（默认123456）"/>
+        <input class="btn-login" id="reg_submit" type="button"  value="确认" >
       </section>
     </form>
   </article>

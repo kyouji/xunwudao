@@ -10,6 +10,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -28,8 +29,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tencent.common.Configure;
+import com.ynyes.xunwudao.entity.TdArea;
 import com.ynyes.xunwudao.entity.TdGoods;
 import com.ynyes.xunwudao.entity.TdUser;
+import com.ynyes.xunwudao.service.TdAreaService;
 import com.ynyes.xunwudao.service.TdCommonService;
 import com.ynyes.xunwudao.service.TdEnterTypeService;
 import com.ynyes.xunwudao.service.TdGoodsService;
@@ -53,6 +56,9 @@ public class TdRegController {
 	
 	@Autowired
 	private TdGoodsService tdGoodsService;
+	
+	@Autowired
+	private TdAreaService tdAreaService;
 	
 	@RequestMapping("/reg")
 	public String reg(/* Integer shareId, */String name, String rfCode, String code,   HttpServletRequest request,
@@ -121,9 +127,17 @@ public class TdRegController {
 			res.put("id", "txt_regMobile");
 			return res;
 		}
+		String CODE_MOBILE = (String) request.getSession().getAttribute("CODE_MOBILE");
+		if(null != CODE_MOBILE){
+			if(!CODE_MOBILE.equalsIgnoreCase(mobile)){
+				res.put("msg", "手机号与短信验证不一致！");
+				res.put("id", "txt_regMobile");
+				return res;
+			}
+	    }
 		TdUser user2 = tdUserService.findByMobile(mobile);
 		if (null != user2) {
-			res.put("msg", "该电话号码已注册，要合并账号吗？");
+			res.put("msg", "该手机号码已注册，确定绑定账号吗？");
 			res.put("addall", mobile);
 			res.put("id", "txt_regMobile");
 			return res;
@@ -203,6 +217,216 @@ public class TdRegController {
 	    res.put("code", 0);
 	    return res;
 	}
+	
+	/*
+	 * 第三方登陆，绑定手机号
+	 */
+	@RequestMapping(value = "/user/set/mobile", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> userSetMobile(
+									String mobile, 
+									String smsCode,
+									String rfCode,
+									String qqOpenid,
+									String openid,
+									String unionid,
+									String username,
+									String password,
+									String nickname,
+									String headImageUrl,
+									String address,
+									String province,
+									Boolean sex,
+									HttpServletRequest request) {
+	    Map<String, Object> res = new HashMap<String, Object>();
+	    res.put("code", 1);
+	    
+	    if(null == openid && null == unionid && null == qqOpenid){
+	    	res.put("msg", "数据错误，请退出重新操作！");
+			return res;
+	    }
+	    
+		if (null == mobile || mobile.equals(""))
+		{
+			res.put("msg", "手机电话不能为空！");
+			res.put("id", "txt_regMobile");
+			return res;
+		}
+		if(!isMobileNO(mobile))
+		{
+			res.put("msg", "手机号码格式不对！");
+			res.put("id", "txt_regMobile");
+			return res;
+		}
+		String CODE_MOBILE = (String) request.getSession().getAttribute("CODE_MOBILE");
+		if(null != CODE_MOBILE){
+			if(!CODE_MOBILE.equalsIgnoreCase(mobile)){
+				res.put("msg", "手机号与短信验证不一致！");
+				res.put("id", "txt_regMobile");
+				return res;
+			}
+	    }
+		TdUser user2 = tdUserService.findByMobile(mobile);
+		if (null != user2) {
+			res.put("msg", "该手机号码已注册，确定绑定账号吗？");
+			res.put("addall", mobile);
+			res.put("id", "txt_regMobile");
+			return res;
+		}
+		
+	    String SMSCODE = (String) request.getSession().getAttribute("SMSCODE");
+	    if(null != SMSCODE){
+			if(!SMSCODE.equalsIgnoreCase(smsCode)){
+				res.put("msg", "手机验证码错误！");
+				res.put("id", "txt_regMcode");
+				return res;
+			}
+	    }
+	
+		TdUser newUser = new TdUser();
+		if(null == username || username.equals("")){
+			Random random = new Random();
+			if(null != openid && !openid.equals("")){
+				newUser.setUsername("weixin_"+openid.substring(0, 4)+(random.nextInt(9000)+1000));
+			}else if(null != qqOpenid && !qqOpenid.equals("")){
+				newUser.setUsername("qq_"+qqOpenid.substring(0, 4)+(random.nextInt(9000)+1000));
+			}
+			
+		}
+		if(null != province && !province.equals("")){
+			List<TdArea> arealist = tdAreaService.findByIsEnableTrueOrderBySortIdAsc();
+			for(TdArea item : arealist){
+				if (province.equals(item.getTitle())){
+					newUser.setAreaId(item.getId());
+				}
+			}
+		}
+		
+		newUser.setPassword("123456");
+		newUser.setAddress(address);
+		newUser.setNickname(nickname);
+		newUser.setSex(sex);
+		newUser.setMobile(mobile);
+		newUser.setHeadImageUrl(headImageUrl);
+		newUser.setTotalPoints(0L);
+		newUser.setStatusId(1L);
+		newUser.setRegisterTime(new Date());
+		newUser.setLastLoginTime(new Date());
+		newUser.setOpenid(openid);
+		newUser.setUnionid(unionid);
+		newUser.setQqOpenid(qqOpenid);
+		tdUserService.save(newUser);
+		
+		Long id = newUser.getId();
+        String number = String.format("%04d", id);
+		newUser.setNumber(number);
+		tdUserService.save(newUser);
+		
+		request.getSession().setMaxInactiveInterval(60 * 60 * 2);
+		request.getSession().setAttribute("username", newUser.getUsername());
+		
+		 if(null != rfCode && !rfCode.equals("") && !rfCode.equals("null")){
+				//第一级推荐人id
+				Long userId = Long.parseLong(rfCode.substring(0, 4));
+				String url = null;
+				//商品id 
+				if(rfCode.length() > 7){
+					Long goodsId = Long.parseLong(rfCode.substring(7));
+					TdGoods goods = tdGoodsService.findOne(goodsId);
+					
+					//让新用户登陆后跳转到分享的商品详情页面
+					if( null != goods){
+						 url = "/goods/detail?id="+goods.getId();
+						 res.put("url", url);
+					}
+				}
+				TdUser userOne = tdUserService.findOne(userId);
+				
+				
+				if(null == userOne){
+					System.out.println("userOne is NULL");
+				}
+				if(null != userOne){
+					//第一级推荐人
+					newUser.setUpUserOne(userOne.getId());
+					//第二级推荐人
+					Long userTwoUpId = userOne.getUpUserOne();
+					if(null != userTwoUpId){
+						TdUser userTwo = tdUserService.findOne(userTwoUpId);
+						if(null != userTwo){
+							newUser.setUpUserTwo(userTwo.getId());
+						}
+					}
+				}
+        }
+		
+		res.put("msg", "绑定成功！");
+	    res.put("code", 0);
+	    return res;
+	}
+	
+	@RequestMapping(value = "/user/changeTo", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> userChangeTo(
+									String mobile, 
+									String openid,
+									String unionid,
+									String qqOpenid,
+									String username,
+									String password,
+									HttpServletRequest request) {
+	    Map<String, Object> res = new HashMap<String, Object>();
+	    res.put("code", 1);
+	    
+	    if(null == openid && null == unionid && null == qqOpenid){
+	    	res.put("msg", "数据错误，请退出重新操作！");
+			return res;
+	    }
+	    
+		if (null == mobile || mobile.equals(""))
+		{
+			res.put("msg", "手机电话不能为空！");
+			res.put("id", "txt_regMobile");
+			return res;
+		}
+		if(!isMobileNO(mobile))
+		{
+			res.put("msg", "手机号码格式不对！");
+			res.put("id", "txt_regMobile");
+			return res;
+		}
+		String CODE_MOBILE = (String) request.getSession().getAttribute("CODE_MOBILE");
+		if(null != CODE_MOBILE){
+			if(!CODE_MOBILE.equalsIgnoreCase(mobile)){
+				res.put("msg", "手机号与短信验证不一致！");
+				res.put("id", "txt_regMobile");
+				return res;
+			}
+	    }
+		TdUser userEver = tdUserService.findByMobile(mobile);
+		if (null == userEver) {
+			res.put("msg", "账号不存在！");
+			res.put("id", "txt_regMobile");
+			return res;
+		}
+	
+		//绑定第三方到手机所在账号
+		if(null != username && !username.equals("")){
+			userEver.setUsername(username);
+		}
+		userEver.setPassword(password);
+		userEver.setOpenid(openid);
+		userEver.setUnionid(unionid);
+		
+		tdUserService.save(userEver);
+		
+		request.getSession().setMaxInactiveInterval(60 * 60 * 2);
+		request.getSession().setAttribute("username", userEver.getUsername());
+		
+		res.put("msg", "修改成功！");
+	    res.put("code", 0);
+	    return res;
+	}
 	/**
 	 * 
 	 * 注册用户保存到数据库<BR>
@@ -247,12 +471,22 @@ public class TdRegController {
 			res.put("id", "txt_regMobile");
 			return res;
 		}
+		
 		TdUser user2 = tdUserService.findByMobile(mobile);
 		if (null != user2) {
 			res.put("msg", "该联系电话已被注册！");
 			res.put("id", "txt_regMobile");
 			return res;
 		}
+		
+		String CODE_MOBILE = (String) request.getSession().getAttribute("CODE_MOBILE");
+		if(null != CODE_MOBILE){
+			if(!CODE_MOBILE.equalsIgnoreCase(mobile)){
+				res.put("msg", "手机号与短信验证不一致！");
+				res.put("id", "txt_regMobile");
+				return res;
+			}
+	    }
 		
 	    String SMSCODE = (String) request.getSession().getAttribute("SMSCODE");
 	    if(null != SMSCODE){
@@ -374,7 +608,7 @@ public class TdRegController {
 		String smscode = random.nextInt(9000) + 1000 + "";
 		HttpSession session = request.getSession();
 		session.setAttribute("SMSCODE", smscode);
-		res.put("smscode", smscode); //测试用
+		session.setAttribute("CODE_MOBILE", mobile);
 		String info = "【循伍道助健康】验证码:" + smscode + "，健康交给循伍道，活到100不算老，欢迎你注册循伍道健康管理VIP会员，此验证码三分钟内有效。";
 		System.err.println(smscode);
 		String content = null;
@@ -476,6 +710,7 @@ public class TdRegController {
 		String smscode = random.nextInt(9000) + 1000 + "";
 		HttpSession session = request.getSession();
 		session.setAttribute("SMSCODE", smscode);
+		session.setAttribute("CODE_MOBILE", mobile);
 		String info = "【循伍道助健康】验证码:" + smscode + "，此验证码三分钟内有效。健康交给循伍道，活到100不算老。";
 		System.err.println(smscode);
 		String content = null;

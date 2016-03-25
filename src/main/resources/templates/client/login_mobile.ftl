@@ -48,9 +48,7 @@ $(document).ready(function(){
             success : function(data) {  
                 if(data.code==1){
                 	alert(data.msg);
-                	if(typeof(data.id) != "undefined"){
-                		document.getElementById(data.id).focus;
-                	}
+                	location.href='/reg';
                 }
                 else if(data.code==0){
                 	if(typeof(data.url) != "undefined"){

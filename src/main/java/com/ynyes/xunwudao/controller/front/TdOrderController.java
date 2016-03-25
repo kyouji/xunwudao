@@ -680,6 +680,7 @@ public class TdOrderController extends AbstractPaytypeController {
 			Long[] cartGoodsIds,
 			Long[] quantities,
 			Double pointD,
+			String payTypeTitle,
 			HttpServletRequest req, ModelMap map) {
 	    Map<String, Object> res = new HashMap<String, Object>();
 	    res.put("code", 1);
@@ -872,6 +873,7 @@ public class TdOrderController extends AbstractPaytypeController {
 		tdOrder.setAddress(address);
 		tdOrder.setMobile(mobile);
 		tdOrder.setIdCard(idCard);
+		tdOrder.setPayTypeTitle(payTypeTitle);
 		
 		tdOrder.setUserRemarkInfo(userRemarkInfo);
 
@@ -935,6 +937,16 @@ public class TdOrderController extends AbstractPaytypeController {
 //		map.addAttribute("order", tdOrder);
 		
 //		return "/client/order_status";
+		
+		res.put("orderNumber", tdOrder.getOrderNumber());
+		res.put("money", tdOrder.getTotalPrice());
+		if(null != payTypeTitle){
+			if(payTypeTitle.equals("支付宝")){
+				res.put("payType", 0);
+			}else if(payTypeTitle.equals("微信")){
+				res.put("payType", 1);
+			}
+		}
 		res.put("code", 0);
 		return res;
 	}

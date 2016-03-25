@@ -46,11 +46,9 @@ $(document).ready(function(){
 	
 	var ua = navigator.userAgent.toLowerCase();
 	if(ua.match(/MicroMessenger/i)=="micromessenger") {
-	console.log("微信");
 		$("#weixin").css("display","block");
 		$("#zhifubao").css("display","none");
 	}else{
-	console.log("支付宝");
 		$("#zhifubao").css("display","block");
 		$("#weixin").css("display","none");
 	}
@@ -78,11 +76,16 @@ function cart()
 }
 //分享
 function share(){
-	if($(".jiathis_style_m").css("display") == "none"){
-		$(".jiathis_style_m").css("display","block");
-	}
-	else{
-		$(".jiathis_style_m").css("display","none");
+	var ua = navigator.userAgent.toLowerCase();
+	if(ua.match(/MicroMessenger/i)=="micromessenger") {
+		alert("请在微信菜单中点击分享！");
+	}else{
+		if($(".jiathis_style_m").css("display") == "none"){
+			$(".jiathis_style_m").css("display","block");
+		}
+		else{
+			$(".jiathis_style_m").css("display","none");
+		}
 	}
 }
 </script>
@@ -312,7 +315,7 @@ wx.ready(function(){
         <p class="p3">活动价：<#if tdGoods.salePrice??>￥<span>${tdGoods.salePrice?string("0.00")}</span><#else><span>免费</span></#if></p>
       </div>
       
-      <a class="right" href="javascript:share();">分享</a>
+      <a  class="right" href="javascript:share();">分享</a>
 		
 <!-- JiaThis Button BEGIN -->
 <div class="jiathis_style_m" style="display:none;">

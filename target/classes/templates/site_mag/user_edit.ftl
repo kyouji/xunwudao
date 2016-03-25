@@ -172,7 +172,7 @@ $(function () {
     <dl>
         <dt>用户名：</dt>
         <dd>
-                <input name="username" type="text" maxlength="200" class="input normal" datatype="s6-20" ajaxurl="/Verwalter/user/check<#if user??>?id=${user.id}</#if>" sucmsg=" " minlength="2">
+                <input name="username" value="<#if user??>${user.username!''}</#if>" type="text" maxlength="200" class="input normal" datatype="s6-20" ajaxurl="/Verwalter/user/check<#if user??>?id=${user.id}</#if>" sucmsg=" " minlength="2">
             <span class="Validform_checktip">
         </span></dd>
     </dl>
@@ -186,7 +186,7 @@ $(function () {
   </dl>
   <dl>
     <dt>手机号码</dt>
-    <dd><input name="mobile" type="text" value="<#if user??>${user.mobile!""}</#if>" class="input normal" ignore="ignore" datatype="m" sucmsg=" " ></dd>
+    <dd><input name="mobile" type="text" value="<#if user??>${user.mobile!""}</#if>" class="input normal" ignore="ignore" ajaxurl="/Verwalter/user/check/mobile<#if user??>?id=${user.id?c!''}</#if>" datatype="m|/^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/" sucmsg=" " ></dd>
   </dl>
   <dl>
     <dt>累计消费额</dt>
@@ -195,7 +195,7 @@ $(function () {
   <dl>
     <dt>上传头像</dt>
     <dd>
-        <input id="txtImgUrl" name="headImageUri" type="text" value="<#if user??>${user.headImageUri!""}</#if>" class="input normal upload-path">
+        <input id="txtImgUrl" name="headImageUri" type="text" value="<#if user??>${user.headImageUrl!""}</#if>" class="input normal upload-path">
         <div class="upload-box upload-img"></div>
         <div class="photo-list thumb_ImgUrl_show">
             <ul>
@@ -222,12 +222,16 @@ $(function () {
     </dd>
   </dl>
   <dl>
-    <dt>用户积分</dt>
-    <dd><input name="totalPoints1" id="totalPoints" type="text" class="input" datatype="*" value="<#if user?? && user.totalPoints??>${user.totalPoints?c}<#else>0</#if>"></dd>
+    <dt>消费</dt>
+    <dd>￥<#if user.spend??>${user.spend?string("0.00")}<#else>0.00</#if></dd>
   </dl>
   <dl>
-    <dt>下级用户总数</dt>
-    <dd><input name="totalLowerUsers" type="text" id="txtPay_Password" class="input" sucmsg=" " value="<#if user?? && user.totalLowerUsers??>${user.totalLowerUsers?c}</#if>"> <span class="Validform_checktip"></span></dd>
+    <dt>用户积分</dt>
+    <dd><input name="totalPoints" id="totalPoints" type="text" class="input" datatype="*" value="<#if user?? && user.totalPoints??>${user.totalPoints?c}<#else>0</#if>"></dd>
+  </dl>
+  <dl>
+    <dt>下级用户数</dt>
+    <dd><#if lower??>${lower!''}<#else>0</#if></dd>
   </dl>
   <#--
   <dl>

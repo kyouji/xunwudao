@@ -64,7 +64,7 @@ function loginSubmit()
 					location.href='/getOpen<#if goodsId??>?goodsId=${goodsId?c}</#if>';
 				}else{
 					<#if goodsId??>
-				     location.href='/goods/detail/${goodsId?c}';
+				     location.href='/goods/detail?id=${goodsId?c}';
 					<#else>
 				     location.href="/user/center";
 				    </#if>

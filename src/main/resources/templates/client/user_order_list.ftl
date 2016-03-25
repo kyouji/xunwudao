@@ -270,12 +270,13 @@ function finishServ(orderNumber,state){
 				          		</#list>
 				         	</#if> 
 				          </section>
-			          <section class="sec3">包含所有套餐共<span>${totalQuantity?c}</span>份，合计：￥<span>${totalPrice?string("0.00")}</span></section>
+				          <div class="div1">下单时间&nbsp;&nbsp;<span>${order.orderTime?string("yyyy-MM-dd HH:mm:ss")}</span></div>
+				          <#assign totalPrice = totalPrice - order.pointUse/100>
+			          <section class="sec3">包含所有套餐共<span>${totalQuantity?c}</span>份，<#if order.pointUse??>积分抵扣：-￥${(order.pointUse/100)?string("0.00")}，</#if>合计：￥<span>${totalPrice?string("0.00")}</span></section>
 			          <section class="sec4">
 			          	<#--
 			            <a href="<#if totalPrice?? && totalPrice gt 0>/user/pay/alipay/recharge?money=${totalPrice?string("0.00")}&orderNumber=${order.orderNumber!''}<#else>/user/pay/free?money=0.00&orderNumber=${order.orderNumber!''}</#if>">确认付款</a>
 			            -->
-			            <div class="div1">下单时间&nbsp;&nbsp;<span>${order.orderTime?string("yyyy-MM-dd HH:mm:ss")}</span></div>
 			            <a href="javascript:pay('${totalPrice?string("0.00")}','${order.orderNumber!''}');">去付款</a>
 			            <a href="/order/cancel?orderNumber=${order.orderNumber!''}&state=${order.statusId!''}">取消订单</a>
 			          </section>

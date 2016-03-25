@@ -246,7 +246,7 @@ $(function () {
                 </td>
                 <td>
                   <div class="user-box">
-                    <h4><b>${user.username!""}</b> (姓名：${user.realName!""})</h4>
+                    <h4><a href="/Verwalter/user/edit?id=${user.id?c}"><b>${user.username!""}</b></a> (姓名：${user.realName!""})</h4>
                     <i>注册时间：${user.registerTime!""}</i>
                     <#--
                     <span>

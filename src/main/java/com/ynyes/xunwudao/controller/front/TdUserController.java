@@ -137,13 +137,12 @@ public class TdUserController {
 	
 	@RequestMapping(value = "/weixin/login")
 	public String weixinLogin(String rfCode, HttpServletRequest req){
-		return "redirect:https://open.weixin.qq.com/connect/oauth2/authorize?appid="+Configure.getAppid()+"&redirect_uri=http%3A%2F%2Fwww.xwd33.com/weixin/user/center?rfCode="+rfCode+"&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+		return "redirect:https://open.weixin.qq.com/connect/oauth2/authorize?appid="+Configure.getAppid()+"&redirect_uri=http%3A%2F%2Fwww.xwd33.com/weixin/login/return?rfCode="+rfCode+"&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
 	}
 	
 	//微信直接登陆
-	@RequestMapping(value = "/weixin/user/center")
+	@RequestMapping(value = "/weixin/login/return")
 	public String weixinUserCenter(String code, String rfCode, HttpServletRequest req, ModelMap map) {
-		System.out.println("WEIXIN USER CENTER");
 		tdCommonService.setHeader(map, req);
 		
         if (null != code) {
@@ -157,76 +156,88 @@ public class TdUserController {
 			if(null != unionid && null != openid){
 				TdUser tdUser = tdUserService.findByUnionid(unionid);
 				if(null == tdUser){
-					
 					Map<String, Object> userInfo = weixin.getWeixinInfo(access_token, openid);
+					System.out.println("USER INFO -----------: "+userInfo);
+					map.addAttribute("headImageUrl", userInfo.get("headimgurl").toString());
+					map.addAttribute("nickname", userInfo.get("nickname").toString());
+					map.addAttribute("sex", (boolean)userInfo.get("sex"));
+					map.addAttribute("address", userInfo.get("province").toString()+userInfo.get("city").toString());
+					map.addAttribute("province", userInfo.get("province").toString());
 					
-					System.out.println("****RES"+res);
-					System.out.println("****openid"+openid);
-					
-					TdUser newUser = new TdUser();
-					newUser.setUsername("weixin_"+openid.substring(0, 8));
-					newUser.setPassword("123456");
-					newUser.setAddress(userInfo.get("province").toString()+userInfo.get("city").toString());
-					newUser.setNickname(userInfo.get("nickname").toString());
-					newUser.setSex((boolean)userInfo.get("sex"));
-					newUser.setHeadImageUrl(userInfo.get("headimgurl").toString());
-					newUser.setTotalPoints(0L);
-					newUser.setStatusId(1L);
-					newUser.setRegisterTime(new Date());
-					newUser.setLastLoginTime(new Date());
-					newUser.setOpenid(openid);
-					newUser.setUnionid(unionid);
-					tdUserService.save(newUser);
-					
-					Long id = newUser.getId();
-			        String number = String.format("%04d", id);
-					newUser.setNumber(number);
-					tdUserService.save(newUser);
-					
-					map.addAttribute("user", newUser);
-					req.getSession().setMaxInactiveInterval(60 * 60 * 2);
-					req.getSession().setAttribute("username", newUser.getUsername());
-					
-					 if(null != rfCode && !rfCode.equals("")){
-							//第一级推荐人id
-							Long userId = Long.parseLong(rfCode.substring(0, 4));
-							String url = null;
-							//商品id 
-							if(rfCode.length() > 7){
-								Long goodsId = Long.parseLong(rfCode.substring(7));
-								TdGoods goods = tdGoodsService.findOne(goodsId);
-								
-								//让新用户登陆后跳转到分享的商品详情页面
-								if( null != goods){
-									 url = "/goods/detail?id="+goods.getId();
-								
-								}
-							}
-							TdUser userOne = tdUserService.findOne(userId);
-							
-							
-							if(null == userOne){
-								System.out.println("userOne is NULL");
-							}
-							if(null != userOne){
-								//第一级推荐人
-								newUser.setUpUserOne(userOne.getId());
-								//第二级推荐人
-								Long userTwoUpId = userOne.getUpUserOne();
-								if(null != userTwoUpId){
-									TdUser userTwo = tdUserService.findOne(userTwoUpId);
-									if(null != userTwo){
-										newUser.setUpUserTwo(userTwo.getId());
-									}
-								}
-							}
-			        
-				        if(null != url && !url.equals("")){
-				        	return "redirect:"+url;
-				        }else{
-				        	return "redirect:/user/center?WX=1";
-				        }
-			        }
+					map.addAttribute("openid", openid);
+					map.addAttribute("unionid", unionid);
+					map.addAttribute("access_token", access_token);
+					map.addAttribute("rfCode", rfCode);
+					return "/client/user_set_mobile";
+//					Map<String, Object> userInfo = weixin.getWeixinInfo(access_token, openid);
+//					
+//					System.out.println("****RES"+res);
+//					System.out.println("****openid"+openid);
+//					
+//					TdUser newUser = new TdUser();
+//					newUser.setUsername("weixin_"+openid.substring(0, 8));
+//					newUser.setPassword("123456");
+//					newUser.setAddress(userInfo.get("province").toString()+userInfo.get("city").toString());
+//					newUser.setNickname(userInfo.get("nickname").toString());
+//					newUser.setSex((boolean)userInfo.get("sex"));
+//					newUser.setHeadImageUrl(userInfo.get("headimgurl").toString());
+//					newUser.setTotalPoints(0L);
+//					newUser.setStatusId(1L);
+//					newUser.setRegisterTime(new Date());
+//					newUser.setLastLoginTime(new Date());
+//					newUser.setOpenid(openid);
+//					newUser.setUnionid(unionid);
+//					tdUserService.save(newUser);
+//					
+//					Long id = newUser.getId();
+//			        String number = String.format("%04d", id);
+//					newUser.setNumber(number);
+//					tdUserService.save(newUser);
+//					
+//					map.addAttribute("user", newUser);
+//					req.getSession().setMaxInactiveInterval(60 * 60 * 2);
+//					req.getSession().setAttribute("username", newUser.getUsername());
+//					
+//					 if(null != rfCode && !rfCode.equals("")){
+//							//第一级推荐人id
+//							Long userId = Long.parseLong(rfCode.substring(0, 4));
+//							String url = null;
+//							//商品id 
+//							if(rfCode.length() > 7){
+//								Long goodsId = Long.parseLong(rfCode.substring(7));
+//								TdGoods goods = tdGoodsService.findOne(goodsId);
+//								
+//								//让新用户登陆后跳转到分享的商品详情页面
+//								if( null != goods){
+//									 url = "/goods/detail?id="+goods.getId();
+//								
+//								}
+//							}
+//							TdUser userOne = tdUserService.findOne(userId);
+//							
+//							
+//							if(null == userOne){
+//								System.out.println("userOne is NULL");
+//							}
+//							if(null != userOne){
+//								//第一级推荐人
+//								newUser.setUpUserOne(userOne.getId());
+//								//第二级推荐人
+//								Long userTwoUpId = userOne.getUpUserOne();
+//								if(null != userTwoUpId){
+//									TdUser userTwo = tdUserService.findOne(userTwoUpId);
+//									if(null != userTwo){
+//										newUser.setUpUserTwo(userTwo.getId());
+//									}
+//								}
+//							}
+//			        
+//				        if(null != url && !url.equals("")){
+//				        	return "redirect:"+url;
+//				        }else{
+//				        	return "redirect:/user/center?WX=1";
+//				        }
+//			        }
 				}
 				else{
 					tdUser.setLastLoginTime(new Date());
@@ -367,7 +378,10 @@ public class TdUserController {
 
 		tdCommonService.setHeader(map, req);
 		TdUser user = tdUserService.findByUsernameAndIsEnabled(username);
+		
+		List<TdArea> arealist = tdAreaService.findByIsEnableTrueOrderBySortIdAsc();
 
+		map.addAttribute("area_list", arealist);
 		map.addAttribute("user", user);
         map.addAttribute("showIcon", 4);
 
@@ -1115,4 +1129,57 @@ public class TdUserController {
 
 		return res;
 	}
+	
+	//第三方登陆解绑
+	@RequestMapping(value = "/user/remove/weixin", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> userRemoveWeixin(HttpServletRequest req) {
+		Map<String, Object> res = new HashMap<String, Object>();
+		res.put("code", 1);
+		String username = (String) req.getSession().getAttribute("username");
+		if (null == username) {
+			res.put("msg", "请先登录！");
+			return res;
+		}
+		TdUser user = tdUserService.findByUsernameAndIsEnabled(username);
+		String openid = user.getOpenid();
+		String unionid = user.getUnionid(); 
+		if(null == openid && null == unionid){
+			res.put("msg", "您的账号未绑定微信！");
+			return res;
+		}
+		user.setQqOpenid("");
+		user.setUnionid("");
+		tdUserService.save(user);
+
+		res.put("msg", "解除成功！");
+		res.put("code", 0);
+
+		return res;
+	}
+	@RequestMapping(value = "/user/remove/qq", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> userRemoveQq(HttpServletRequest req) {
+		Map<String, Object> res = new HashMap<String, Object>();
+		res.put("code", 1);
+		String username = (String) req.getSession().getAttribute("username");
+		if (null == username) {
+			res.put("msg", "请先登录！");
+			return res;
+		}
+		TdUser user = tdUserService.findByUsernameAndIsEnabled(username);
+		String qqOpenid = user.getQqOpenid();
+		if(null == qqOpenid|| qqOpenid.equals("")){
+			res.put("msg", "您的账号未绑定QQ！");
+			return res;
+		}
+		user.setQqOpenid("");
+		tdUserService.save(user);
+
+		res.put("msg", "解除成功！");
+		res.put("code", 0);
+
+		return res;
+	}
+	
 }

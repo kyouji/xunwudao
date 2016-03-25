@@ -105,7 +105,6 @@ public class TdManagerUserController {
     
     
     
-    //企业添加编辑 检验重复电话
     @RequestMapping(value = "/check/mobile", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, String> validateFormMobile(String param, Long id) {
@@ -266,6 +265,8 @@ public class TdManagerUserController {
             map.addAttribute("id",id);
             map.addAttribute("roleId",user.getRoleId());
             map.addAttribute("photo_list", tdPhotoService.findByStatusIdAndUserId(2L, user.getId()));
+            int lower = tdUserService.findByUpUserOneOrderByLastLoginTimeDesc(id).size();
+            map.addAttribute("lower", lower);
         }
         map.addAttribute("roleId",0);
         return "/site_mag/user_edit";

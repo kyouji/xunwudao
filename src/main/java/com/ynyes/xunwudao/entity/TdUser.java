@@ -42,6 +42,10 @@ public class TdUser {
 	// 性别
 	@Column
 	private Boolean sex;
+	
+	//地区
+	@Column
+	private Long areaId;
     
 	// 状态
     @Column
@@ -365,6 +369,22 @@ public class TdUser {
 
 	public Long getRoleId() {
 		return roleId;
+	}
+
+
+
+
+
+	public Long getAreaId() {
+		return areaId;
+	}
+
+
+
+
+
+	public void setAreaId(Long areaId) {
+		this.areaId = areaId;
 	}
 
 
