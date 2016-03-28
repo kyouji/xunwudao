@@ -31,6 +31,11 @@ function __doPostBack(eventTarget, eventArgument) {
     }
 }
 
+	document.onkeydown = function(event){
+        if((event.keyCode || event.which) == 13){
+            location.href="javascript:__doPostBack('btnSearch','')";
+        }
+   }
 </script>
 
     <!--导航栏-->

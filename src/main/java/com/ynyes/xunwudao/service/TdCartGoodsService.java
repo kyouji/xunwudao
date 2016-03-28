@@ -106,9 +106,24 @@ public class TdCartGoodsService {
         return repository.findByGoodsIdAndUsername(goodsId, username);
     }
     
+    public List<TdCartGoods> findByGoodsIdAndUserId(Long goodsId, Long userId)
+    {
+        if (null == goodsId || null == userId)
+        {
+            return null;
+        }
+        
+        return repository.findByGoodsIdAndUserId(goodsId, userId);
+    }
+    
     public List<TdCartGoods> findByUsername(String username)
     {
         return repository.findByUsername(username);
+    }
+    
+    public List<TdCartGoods> findByUserId(Long userId)
+    {
+        return repository.findByUserId(userId);
     }
     
     public List<TdCartGoods> findByUsernameAndIsSelectedTrue(String username)
@@ -116,13 +131,22 @@ public class TdCartGoodsService {
         return repository.findByUsernameAndIsSelectedTrue(username);
     }
     
+    public List<TdCartGoods> findByUserIdAndIsSelectedTrue(Long userId)
+    {
+        return repository.findByUserIdAndIsSelectedTrue(userId);
+    }
+    
     public List<TdCartGoods> findByisLoggedInFalse(){
     	return repository.findByIsLoggedInFalse();
     }
     
     //收藏直接购买
-    public List<TdCartGoods> findByUserIdAndIsCollectedTrue(String username){
+    public List<TdCartGoods> findByUsernameAndIsCollectedTrue(String username){
     	return repository.findByUsernameAndIsCollectedTrue(username);
+    }
+    
+    public List<TdCartGoods> findByUserIdAndIsCollectedTrue(Long userId){
+    	return repository.findByUserIdAndIsCollectedTrue(userId);
     }
       
     /**

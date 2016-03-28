@@ -204,7 +204,7 @@ public class TdWeixinController {
 	
 	//微信 获取openid
 	@RequestMapping(value = "/weixin/pay/getOpen")
-	public String weixinPayGetOpen(Long orderNumber, HttpServletRequest req, ModelMap map) throws UnsupportedEncodingException{
+	public String weixinPayGetOpen(String orderNumber, HttpServletRequest req, ModelMap map) throws UnsupportedEncodingException{
 			return "redirect:https://open.weixin.qq.com/connect/oauth2/authorize?appid="+Configure.getAppid()+ 
 					 "&redirect_uri=http://www.xwd33.com/weixin/pay?orderNumber="+orderNumber+"&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
 	}
@@ -278,7 +278,7 @@ public class TdWeixinController {
         	order.setStatusId(7L);
         	tdOrderService.save(order);
         	map.addAttribute("msg", "订单已过期！");
-        	map.addAttribute("url", "/user/order/list/2");
+        	map.addAttribute("url", "/user/order/list");
         	return "/client/error_404";
         }
 

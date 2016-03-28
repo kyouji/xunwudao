@@ -24,11 +24,19 @@ public interface TdCartGoodsRepo extends
     
     List<TdCartGoods> findByGoodsIdAndUsername(Long goodsId, String username);
     
+    List<TdCartGoods> findByGoodsIdAndUserId(Long goodsId, Long userId);
+    
     List<TdCartGoods> findByUsername(String username);
     
+    List<TdCartGoods> findByUserId(Long userId);
+    
     List<TdCartGoods> findByUsernameAndIsSelectedTrue(String username);
+    
+    List<TdCartGoods> findByUserIdAndIsSelectedTrue(Long userId);
     
     List<TdCartGoods> findByIsLoggedInFalse();
     
     List<TdCartGoods> findByUsernameAndIsCollectedTrue(String username);
+    
+    List<TdCartGoods> findByUserIdAndIsCollectedTrue(Long userId);
 }

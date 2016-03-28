@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 
 
 /**
@@ -104,6 +105,7 @@ public class TdSetting {
     
     // 注册用户协议
     @Column
+    @Lob
     private String registerNego;
     
     // 注册成功奖励积分

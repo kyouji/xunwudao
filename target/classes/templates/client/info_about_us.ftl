@@ -14,6 +14,7 @@
 <!-- js -->
 <script type="text/javascript" src="/client/js/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="/client/js/index.js"></script>
+
 </head>
 <body>
 
@@ -30,7 +31,7 @@
       <li><a href="/info/profile">公司简介</a></li>
       <li><a href="/info/photo">荣誉照片墙</a></li>
       <li><a href="/info/doctor">健康管理师</a></li>
-      <#if site??&&site.telephone??&&site.telephone?length gt 0><li><a href="tel:${site.telephone!''}">联系我们：${site.telephone!''}</a></li></#if>
+      <#if site??&&site.telephone??&&site.telephone?length gt 0><li><a id="call_us" href="tel:${site.telephone!''}">联系我们：${site.telephone!''}</a></li></#if>
     </ul>
   </article>
   <!-- 个人中心 END -->

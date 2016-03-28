@@ -32,11 +32,10 @@ $(document).ready(function(){
 		}
 	);
 	
-	//注册提交
+	//提交
 	$("#reg_submit").bind("click", function(){
 		var mobile=$("#txt_regMobile").val();
 		var mCode=$("#txt_regMcode").val();
-		var rfCode=$("#txt_regRfcode").val();
 		var password=$("#txt_regPassword").val();
 		var code=$("#txt_regCode").val();
 		

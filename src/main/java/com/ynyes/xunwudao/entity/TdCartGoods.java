@@ -24,6 +24,9 @@ public class TdCartGoods {
     @Column
     private String username;
     
+    @Column
+    private Long userId;
+    
     // 商品ID
     @Column
     private Long goodsId;
@@ -131,6 +134,14 @@ public class TdCartGoods {
 
 	public void setIsCollected(Boolean isCollected) {
 		this.isCollected = isCollected;
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
     
     

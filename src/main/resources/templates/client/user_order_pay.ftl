@@ -212,7 +212,7 @@ function finishServ(orderNumber,state){
 			}
 			else{
 				alert(data.msg)
-				location.href='/user/order/list/6';
+				location.href='/user/order/list';
 			}
 	      }
 	  });
@@ -267,12 +267,12 @@ function finishServ(orderNumber,state){
 				         	</#if> 
 				          </section>
 			          <section class="sec3">包含所有套餐共<span>${totalQuantity?c}</span>份，合计：￥<span>${totalPrice?string("0.00")}</span></section>
-			          <section <#if paySign??&&paySign?length gt 0>style="display:none;"</#if> id="pay_before"  class="sec4">
+			          <section <#if paySign??&&paySign?length gt 0><#else>style="display:none;"</#if> id="pay_before"  class="sec4">
 			            <a href="javascript:onBridgeReady();">确认付款</a>
 			            <a href="/order/cancel?orderNumber=${order.orderNumber!''}&state=${order.statusId!''}">取消订单</a>
 			          </section>
-			          <section <#if paySign??&&paySign?length gt 0><#else>style="display:none;"</#if> id="pay_after" class="sec4">
-                        <a href="/order/confirm?orderNumber=${order.orderNumber!''}&state=${order.statusId!''}">确认服务</a>
+			          <section <#if paySign??&&paySign?length gt 0>style="display:none;"</#if> id="pay_after" class="sec4">
+                        <a href="javascript:finishServ("${order.orderNumber!''}",${order.statusId!''});">确认服务</a>
                       </section>
 			        </article>
 	</#if>      

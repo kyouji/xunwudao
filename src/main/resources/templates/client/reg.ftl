@@ -11,6 +11,32 @@
 <!-- css -->
 <link rel="stylesheet" type="text/css" href="/client/css/common.css"/>
 <link rel="stylesheet" type="text/css" href="/client/css/main.css"/>
+<style type="text/css">
+  #popups {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 10;
+    display: none;
+    padding: 2%;
+    width: 96%;
+    height: 100%;
+    background-color: #fff;
+  }
+  #popups a {
+    position: relative;
+    left: 50%;
+    bottom: 0;
+    display: block;
+    margin-left: -30px;
+    width: 60px;
+    height: 30px;
+    line-height: 30px;
+    color: #fff;
+    text-align: center;
+    background-color: #72d377;
+  }
+</style>
 <script src="/client/js/jquery-1.11.3.min.js" type="text/javascript"></script>
 <script>
 var seed=60;    //60秒  
@@ -166,6 +192,24 @@ function weixin(){
 </script>
 </head>
 <body>
+
+  <!-- 弹窗 -->
+  <div id="popups">
+    <pre style="line-height: 24px;font-size: 1.1em;"><#if site??&&site.registerNego??&&site.registerNego?length gt 0>${site.registerNego}<#else>如果您违反了以上约定，相关国家机关或机构可能会对您提起诉讼、罚款或采取其他制裁措施，并要求财税宝1688给予协助。造成损害的，您应依法予以赔偿，财税宝1688不承担任何责任。 您在使用本服务过程中应当遵守当地相关的法律法规，并尊重当地的道德和风俗习惯。如果您的行为违反了当地法律法规或道德风俗、宗教信仰等，您应当为此独立承担责任。您应避免因使用本服务而使财税宝1688卷入政治和公共事件，否则财税宝1688有权暂停或终止对您的服务并保留向您追偿的权利。 您同意，未经财税宝1688许可，不使用任何可能对财税宝1688产品或服务造成任何不良影响的第三方软件，如果擅自使用第三方软件给财税宝1688造成损失的，财税宝1688保留对您追偿的权利。您违反本条约定，导致任何第三方损害的，您应当独立承担责任；财税宝1688因此遭受损失的，您也应当一并赔偿。 在任何情况下，您不应轻信借款、索要密码或其他涉及财产的网络信息。涉及财产操作的，请一定先核实对方身份，并请经常留意财税宝1688有关防范诈骗犯罪的提示。 您有责任自行备份存储在本服务中的数据。如果您的服务被终止，财税宝1688可以从服务器上永久地删除您的数据且不承担任何责任。服务终止后，财税宝1688没有义务向您返还数据。</#if></pre>
+    <a href="javascript:;" title="">关闭</a>
+  </div>
+  <!-- 弹窗 end -->
+  <script type="text/javascript">
+    $(function(){
+      $(".service-agreement>a").click(function(){
+        $("#popups").show();
+        // e.stopPropagation();  //阻止冒泡事件
+      });
+      $("#popups a").click(function(){
+        $("#popups").hide();
+      });
+    })
+  </script>
 
   <!-- 头部 -->
   <header class="login-head">

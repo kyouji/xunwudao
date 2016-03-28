@@ -182,6 +182,11 @@ public class TdOrderController extends AbstractPaytypeController {
         	res.put("msg", "请至少选择一件商品！");
         	return res;
         }
+        //初始化被选中状态
+        List<TdCartGoods> initial = tdCartGoodsService.findByUserIdAndIsCollectedTrue(tdUserService.findByUsername(username).getId());
+        for(TdCartGoods item : initial){
+        	tdCartGoodsService.delete(item);
+        }
         
         List<TdCartGoods> buyGoodsList = new ArrayList<TdCartGoods>();
         
@@ -197,10 +202,22 @@ public class TdOrderController extends AbstractPaytypeController {
             buyGoods.setIsLoggedIn(true);
             buyGoods.setIsSelected(true);
             buyGoods.setUsername(username);
+            buyGoods.setUserId(tdUserService.findByUsername(username).getId());
             buyGoods.setIsCollected(true);
             tdCartGoodsService.save(buyGoods);
             
             buyGoodsList.add(buyGoods);
+        }
+        List<TdCartGoods> cartUserGoodsList = tdCartGoodsService.findByUserIdAndIsCollectedTrue(tdUserService.findByUsername(username).getId());
+        for (TdCartGoods cg1 : cartUserGoodsList) 
+        {
+            // 删除重复的商品
+            List<TdCartGoods> findList = tdCartGoodsService.findByGoodsIdAndUserId(cg1.getGoodsId(), tdUserService.findByUsername(username).getId());
+
+            if (null != findList && findList.size() > 1) 
+            {
+                tdCartGoodsService.delete(findList.subList(1,findList.size()));
+            }
         }
         
         res.put("code", 0);
@@ -226,7 +243,7 @@ public class TdOrderController extends AbstractPaytypeController {
         
         tdCommonService.setHeader(map, req);
         
-        List<TdCartGoods> buyGoodsList = tdCartGoodsService.findByUserIdAndIsCollectedTrue(username);
+        List<TdCartGoods> buyGoodsList = tdCartGoodsService.findByUserIdAndIsCollectedTrue(tdUser.getId());
         map.addAttribute("buy_goods_list", buyGoodsList);
         
         return "/client/order_info";
@@ -415,6 +432,8 @@ public class TdOrderController extends AbstractPaytypeController {
 
         if (null == orderGoodsList || orderGoodsList.size() <= 0)
         {
+        	map.addAttribute("msg", "商品不能为空！");
+        	map.addAttribute("url", "/goods/index");
             return "/client/error_404";
         }
 
@@ -537,26 +556,24 @@ public class TdOrderController extends AbstractPaytypeController {
         }
 
             //删掉购物车中未选择的
-            List<TdCartGoods> selectedGoodsList = tdCartGoodsService
-                    .findByUsername(username);
+        List<TdCartGoods> initial = tdCartGoodsService.findByUserIdAndIsSelectedTrue(tdUserService.findByUsername(username).getId());
             
-            for (TdCartGoods cartGoods : selectedGoodsList) {
+            for (TdCartGoods cartGoods : initial) {
             	cartGoods.setIsSelected(false);
             	
             	for (Long cartGoodsId : goodsIds){
             		if(cartGoods.getId() == cartGoodsId)
             		{
                         cartGoods.setIsSelected(true);
-                        
             		}
             	}
             	
             	tdCartGoodsService.save(cartGoods);
             	
-            	if(null == cartGoods.getIsSelected() || cartGoods.getIsSelected() == false)
-            	{
-            		tdCartGoodsService.delete(cartGoods);
-            	}
+//            	if(null == cartGoods.getIsSelected() || cartGoods.getIsSelected() == false)
+//            	{
+//            		tdCartGoodsService.delete(cartGoods);
+//            	}
             }
      
         	res.put("code", 0);
@@ -594,11 +611,12 @@ public class TdOrderController extends AbstractPaytypeController {
 
 	        user = tdUserService.findByUsernameAndIsEnabled(username);
 	        map.addAttribute("user", user);
+	        
         }
 
         
         List<TdCartGoods> selectedGoodsList = tdCartGoodsService
-                .findByUsernameAndIsSelectedTrue(username);
+                .findByUserIdAndIsSelectedTrue(user.getId());
 
         Long totalPointLimited = 0L;// 积分限制综总和
         Double totalPrice = 0.0; // 购物总额
@@ -668,7 +686,7 @@ public class TdOrderController extends AbstractPaytypeController {
     //提交订单 zhangji
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
     @ResponseBody
-	public Map<String,Object>  submit(
+	public Map<String,Object> submit(
 			String realName,
 			Boolean sex,
 			Long areaId,

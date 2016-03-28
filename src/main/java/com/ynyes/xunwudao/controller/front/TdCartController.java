@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ynyes.xunwudao.entity.TdCartGoods;
 import com.ynyes.xunwudao.entity.TdGoods;
+import com.ynyes.xunwudao.entity.TdUser;
 import com.ynyes.xunwudao.service.TdCartGoodsService;
 import com.ynyes.xunwudao.service.TdCommonService;
 import com.ynyes.xunwudao.service.TdGoodsService;
+import com.ynyes.xunwudao.service.TdUserService;
 
 /**
  * 购物车
@@ -39,6 +41,8 @@ public class TdCartController {
     @Autowired
     private TdGoodsService tdGoodService;
     
+    @Autowired
+    private TdUserService tdUserService;
 
     /**
      * 加入购物车
@@ -133,7 +137,7 @@ public class TdCartController {
             // 合并商品
             // 已登录用户的购物车
             List<TdCartGoods> cartUserGoodsList = tdCartGoodsService
-                    .findByUsername(username);
+                    .findByUserId(tdUserService.findByUsername(username).getId());
             for (TdCartGoods cg : cartSessionGoodsList)
             {
             // 将未登录用户的购物车加入已登录用户购物车中
@@ -147,7 +151,7 @@ public class TdCartController {
             for (TdCartGoods cg1 : cartUserGoodsList) 
             {
                 // 删除重复的商品
-                List<TdCartGoods> findList = tdCartGoodsService.findByGoodsIdAndUsername(cg1.getGoodsId(), username);
+                List<TdCartGoods> findList = tdCartGoodsService.findByGoodsIdAndUserId(cg1.getGoodsId(), tdUserService.findByUsername(username).getId());
 
                 if (null != findList && findList.size() > 1) 
                 {
@@ -155,7 +159,14 @@ public class TdCartController {
                 }
             }
         }
-        List<TdCartGoods> resList = tdCartGoodsService.findByUsername(username);
+        TdUser user = tdUserService.findByUsername(username);
+        List<TdCartGoods> resList = null;
+        if(null == user){
+        	resList = tdCartGoodsService.findByUsername(username);
+        }else{
+        	resList = tdCartGoodsService.findByUserId(tdUserService.findByUsername(username).getId());
+        }
+        
         
         List<TdGoods> tdGoodsList = new ArrayList<>();
         for (int i = 0; i < resList.size() ;i++)

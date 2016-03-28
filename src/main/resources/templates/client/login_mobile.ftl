@@ -99,11 +99,10 @@ $(document).ready(function(){
                 	alert(res.msg);
                     $("#smsCodeBtn").removeAttr("disabled");
                     $("#smsCodeBtn").css("background-color","#72d377");
+                    location.href='/reg';
                 }
                 else{
                     alert("验证码发送失败，请再次尝试！");
-                    console.log("message:"+res.message);
-            		console.log("status:"+res.status);
                     $("#smsCodeBtn").removeAttr("disabled");
                     $("#smsCodeBtn").css("background-color","#72d377");
                 }

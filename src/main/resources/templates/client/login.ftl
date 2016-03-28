@@ -16,6 +16,13 @@
 <script src="http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></script>
 <script>
 $(document).ready(function(){
+	var ua = navigator.userAgent.toLowerCase();
+	if(ua.match(/MicroMessenger/i)=="micromessenger") {
+		$("#weixin_login").css("display","block");
+	}else{
+		$("#weixin_login").css("display","none");
+	}
+
 			//记住密码
 			if ($.cookie("savePassword") == "true") { 
 		        $("#savePassword").attr("checked", true); 
@@ -122,7 +129,7 @@ function weixin(){
       <div class="title">其他方式登录</div>
       <ul>
         <li>
-          <a href="javascript:weixin();">
+          <a href="javascript:weixin();" id="weixin_login">
             <img src="/client/images/icon_login_weixin.png" alt="微信登录">
             <#--<a href="http://weixin.qq.com/r/OEzUzGjEzTWyrSyv9xkq"><img src="/client/images/icon_login_phone.png"></a>-->
           </a>

@@ -698,6 +698,18 @@
                     
                     
                     <tr>
+                    	<th width="20%">
+                            使用积分
+                        </th>
+                        <td>
+                            <div class="position">
+                                <span>
+                                    <#if order.pointUse?? && order.pointUse gt 0>${order.pointUse?c}（抵扣${order.pointUse/100} 元）<#else>0</#if>
+                                </span> 
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>	
                         <th width="20%">
                             商品总金额
                         </th>
@@ -712,6 +724,20 @@
                             </div>
                         </td>
                     </tr>
+                    <#if order.totalPriceChangeInfo?? && order.totalPriceChangeInfo?length gt 0>
+	                    <tr>	
+	                        <th width="20%">
+	                            改价备注
+	                        </th>
+	                        <td>
+	                            <div class="position">
+	                                <span>
+	                                    ${order.totalPriceChangeInfo!''}
+	                                </span>
+	                            </div>
+	                        </td>
+	                    </tr>
+                    </#if>
                     <tr>
                         <th width="20%">
                             姓名

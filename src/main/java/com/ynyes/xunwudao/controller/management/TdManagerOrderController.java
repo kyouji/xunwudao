@@ -1715,7 +1715,7 @@ public class TdManagerOrderController {
                 double goodsPrice = Double.parseDouble(data);
                 order.setTotalGoodsPrice(goodsPrice);
                 
-                order.setTotalPrice(goodsPrice + order.getPayTypeFee() /*+ order.getDeliverTypeFee()*/);
+                order.setTotalPrice(goodsPrice - order.getPointUse()/100/*+ order.getPayTypeFee() + order.getDeliverTypeFee()*/);
                 order.setTotalPriceChangeInfo(info);
                 tdManagerLogService.addLog("edit", info, req);
             }

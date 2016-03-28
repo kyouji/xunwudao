@@ -7,7 +7,7 @@
 <meta name="description" content="<#if site??>${site.seoDescription!''}</#if>">
 <meta name="copyright" content="<#if site??>${site.copyright!''}</#if>" />
 <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
-<title>循伍道-手机登陆</title>
+<title>循伍道-修改手机号</title>
 <!-- css -->
 <link rel="stylesheet" type="text/css" href="/client/css/common.css"/>
 <link rel="stylesheet" type="text/css" href="/client/css/main.css"/>
@@ -51,6 +51,9 @@ $(document).ready(function(){
                 		if(confirm(data.msg)){
                 			addall(data.addall);
                 		}
+                	else if(data.login == 1){
+                		location.href="/login";
+                	}	
                 	}else{
                 		alert(data.msg);
 	                	if(typeof(data.id) != "undefined"){
@@ -96,6 +99,7 @@ $(document).ready(function(){
             async : true,  
             type : 'GET',  
             data : {"mobile": mob,
+            			"third":1,
             			"code":code},  
             success : function(res) {  
             console.log("message:"+res.message);

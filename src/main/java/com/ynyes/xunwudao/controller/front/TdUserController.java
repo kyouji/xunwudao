@@ -395,6 +395,7 @@ public class TdUserController {
 													String username,
 													String nickname,
 													Boolean sex,
+													Long areaId,
 //													String headImageUrl,
 													String address, 
 													String password,
@@ -446,6 +447,7 @@ public class TdUserController {
 		
 //		user.setHeadImageUrl(headImageUrl);
 		user.setSex(sex);
+		user.setAreaId(areaId);
 		user.setAddress(address);
 		user.setRealName(realName);
 		user.setPassword(password);

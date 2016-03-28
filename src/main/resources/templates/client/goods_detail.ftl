@@ -289,9 +289,7 @@ wx.ready(function(){
       }
     });
     
-     document.querySelector('#showOptionMenu').onclick = function () {
-    wx.showOptionMenu();
-  };
+
 });
 </script>
 </head>

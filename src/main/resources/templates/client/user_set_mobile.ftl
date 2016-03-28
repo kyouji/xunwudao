@@ -72,7 +72,7 @@ $(document).ready(function(){
                 if(data.code==1){
                 	if(typeof(data.addall != "undefined")){
                 		if(confirm(data.msg)){
-                			changeTo(data.addall,openid,unionid,username,password);
+                			changeTo(data.addall,openid,unionid,qqOpenid,username,password);
                 		}
                 	}else{
                 		alert(data.msg);
@@ -114,10 +114,11 @@ $(document).ready(function(){
         $("#smsCodeBtn").css("background-color","#999999");
 
         $.ajax({  
-            url : "/reg/smscode",  
+            url : "/retrieve/smscode",  
             async : true,  
             type : 'GET',  
             data : {"mobile": mob,
+            			"third":1,
             			"code":code},  
             success : function(res) {  
                 if(1==res.status||0==res.status){
@@ -147,7 +148,7 @@ $(document).ready(function(){
     }); 
 });
 
-function changeTo(mobile,openid,unionid,username,password){
+function changeTo(mobile,openid,unionid,qqOpenid,username,password){
 	var mobile = mobile;
 	$.ajax({  
             url : "/user/changeTo",  
@@ -155,14 +156,15 @@ function changeTo(mobile,openid,unionid,username,password){
             type : 'POST',  
             data : {"mobile": mobile,
             		    "openid":openid,
-            		    "username":username,
+            		    "unionid":unionid,
+            		    "qqOpenid":qqOpenid,            		    "username":username,
             		    "password":password},  
             success : function(data) {  
                 if(data.code==1){
             		alert(data.msg);
                 }
                 else if(data.code==0){
-                	alert("修改成功");
+                	alert("绑定成功");
             		location.href='/user/center';
                 }
              }   

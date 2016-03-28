@@ -154,7 +154,16 @@
       $('#tab-ol-2').find('>li')[index==-1?'show':'hide']().eq(index).show();
     });
     
-	$("#a_by_dx").click();
+    <#if statusId??>
+	    <#if statusId == 2>
+			$("#a_by_dx").click();
+		<#elseif statusId == 4>
+			$("#b_by_dx").click();
+		<#elseif statusId == 6>
+			$("#c_by_dx").click();
+		</#if>
+	</#if>
+	
   });
 </script>
 <script>
@@ -234,8 +243,8 @@ function finishServ(orderNumber,state){
   <article class="my-orders">
     <ul id="tab-ul-2">
       <li><a id="a_by_dx" href="javascript:void(0)">待付款</a></li>
-      <li><a href="javascript:void(0)">待服务</a></li>
-      <li><a href="javascript:void(0)">已完成</a></li>
+      <li><a id="b_by_dx" href="javascript:void(0)">待服务</a></li>
+      <li><a id="c_by_dx" href="javascript:void(0)">已完成</a></li>
     </ul>
     <ol id="tab-ol-2">
       <!-- 待付款 -->

@@ -240,7 +240,13 @@ public class TdIndexController {
             expiresIn = demoJson.getString("expires_in");  
             refresh_token = demoJson.getString("refresh_token");
             openid = demoJson.getString("openid");
-            unionid = demoJson.getString("unionid");
+            if(null != demoJson.getString("unionid")){
+            	unionid = demoJson.getString("unionid");
+            	System.out.println(">>>>>>>>unionid:"+unionid);
+            }else{
+            	System.out.println("?>>>>>>>unionid 不存在");
+            }
+            
             
             res.put("access_token", accessToken);
             res.put("expires_in", expiresIn);

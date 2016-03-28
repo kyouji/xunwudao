@@ -31,6 +31,12 @@ var theForm = document.forms['form1'];
         }
     }
     
+   document.onkeydown = function(event){
+        if((event.keyCode || event.which) == 13){
+            location.href="javascript:__doPostBack('btnSearch','')";
+        }
+   }
+    
 $(function () {
       //$("#btnSendtoAll").click(function () { RedEnvelopetoAll(); });   //发送红包给所有用户
      // $("#btnSendtoOne").click(function () { RedEnvelopetoOne(); });   //发送红包给指定用户

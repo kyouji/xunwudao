@@ -204,6 +204,7 @@ public class TdLoginController extends HttpServlet {
 		TdUser user  = tdUserService.findByMobileAndIsEnabled(mobile);
 		if(null == user){
 			res.put("msg", "用户不存在");
+			return res;
 		}
 		
 		Random random = new Random();
@@ -380,8 +381,9 @@ public class TdLoginController extends HttpServlet {
 
 		TdUser user = tdUserService.findByUsernameAndIsEnabled(mobile);
 		if (null != user) {
-
-			req.getSession().setAttribute("username", user.getUsername());
+			user.setMobile(mobile);
+			tdUserService.save(user);
+//			req.getSession().setAttribute("username", user.getUsername());
 			res.put("msg", "修改密码成功！");
 			res.put("code", 0);
 		} else {
