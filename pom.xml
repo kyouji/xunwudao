@@ -196,7 +196,7 @@
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
             </dependency>
-        <dependency>
+<!--         <dependency>
             <groupId>com.sms</groupId>
             <artifactId>CCP_REST_SMS_SDK_JAVA</artifactId>
             <version>2.6.3</version>
@@ -205,13 +205,13 @@
             <groupId>com.ceb</groupId>
             <artifactId>cebmerchant</artifactId>
             <version>1.0</version>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>com.ceb</groupId>
             <artifactId>json-lib</artifactId>
             <version>2.4</version>
         </dependency>
-        <dependency>
+        <!-- <dependency>
             <groupId>com.ceb</groupId>
             <artifactId>bcprov</artifactId>
             <version>1.0</version>
@@ -240,7 +240,7 @@
             <groupId>com.ceb</groupId>
             <artifactId>jsse</artifactId>
             <version>1.0</version>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>

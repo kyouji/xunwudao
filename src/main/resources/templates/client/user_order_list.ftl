@@ -153,6 +153,8 @@
     $active.addClass('active').siblings('li').removeClass('active');
       $('#tab-ol-2').find('>li')[index==-1?'show':'hide']().eq(index).show();
     });
+    
+	$("#a_by_dx").click();
   });
 </script>
 <script>
@@ -231,7 +233,7 @@ function finishServ(orderNumber,state){
   <!-- 我的订单 -->
   <article class="my-orders">
     <ul id="tab-ul-2">
-      <li><a href="javascript:void(0)">待付款</a></li>
+      <li><a id="a_by_dx" href="javascript:void(0)">待付款</a></li>
       <li><a href="javascript:void(0)">待服务</a></li>
       <li><a href="javascript:void(0)">已完成</a></li>
     </ul>
